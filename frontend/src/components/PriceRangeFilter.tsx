@@ -6,7 +6,6 @@ export default function PriceRangeFilter() {
   const rawMin = params.get('minPrice') ?? '';
   const rawMax = params.get('maxPrice') ?? '';
 
-  // Controlled so they stay in sync when URL changes externally (browser back)
   const [min, setMin] = useState(rawMin);
   const [max, setMax] = useState(rawMax);
 
@@ -48,7 +47,7 @@ export default function PriceRangeFilter() {
               onChange={e => setMin(e.target.value)}
               onBlur={() => apply(min, max)}
               onKeyDown={e => e.key === 'Enter' && apply(min, max)}
-              className="w-full pl-6 pr-2 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-500 transition-colors"
+              className="w-full pl-6 pr-2 py-2 text-sm border border-gray-200 dark:border-white/10 rounded-lg bg-white dark:bg-white/8 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-500 transition-colors"
             />
           </div>
           <span className="text-gray-400 text-xs shrink-0">to</span>
@@ -62,7 +61,7 @@ export default function PriceRangeFilter() {
               onChange={e => setMax(e.target.value)}
               onBlur={() => apply(min, max)}
               onKeyDown={e => e.key === 'Enter' && apply(min, max)}
-              className="w-full pl-6 pr-2 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-500 transition-colors"
+              className="w-full pl-6 pr-2 py-2 text-sm border border-gray-200 dark:border-white/10 rounded-lg bg-white dark:bg-white/8 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-500 transition-colors"
             />
           </div>
         </div>

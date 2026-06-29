@@ -37,8 +37,8 @@ export default function CategoryFilter() {
             onClick={() => toggle(cat)}
             className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all ${
               selected === cat
-                ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 font-medium'
-                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                ? 'bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 font-medium'
+                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/8 hover:text-gray-900 dark:hover:text-gray-100'
             }`}
           >
             {cat}

@@ -11,7 +11,7 @@ export interface AdminProductPayload {
 }
 
 export const adminProductsApi = {
-  getAll: (page = 1, limit = 50) =>
+  getAll: (page = 1, limit = 48) =>
     api
       .get<{ items: Product[]; total: number; page: number; totalPages: number }>(
         '/api/products',

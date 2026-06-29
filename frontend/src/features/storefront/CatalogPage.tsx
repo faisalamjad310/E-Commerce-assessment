@@ -11,12 +11,12 @@ import Pagination from '../../components/Pagination';
 
 function SkeletonCard() {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 animate-pulse">
-      <div className="aspect-[4/3] bg-gray-100 dark:bg-gray-800" />
+    <div className="theme-card rounded-2xl overflow-hidden animate-pulse">
+      <div className="aspect-[4/3] bg-gray-100 dark:bg-white/8" />
       <div className="p-4 space-y-2.5">
-        <div className="h-3.5 bg-gray-100 dark:bg-gray-800 rounded-full w-3/4" />
-        <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded-full w-1/2" />
-        <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded-full w-1/3 mt-1" />
+        <div className="h-3.5 bg-gray-100 dark:bg-white/10 rounded-full w-3/4" />
+        <div className="h-3 bg-gray-100 dark:bg-white/10 rounded-full w-1/2" />
+        <div className="h-5 bg-gray-100 dark:bg-white/10 rounded-full w-1/3 mt-1" />
       </div>
     </div>
   );
@@ -33,7 +33,6 @@ export default function CatalogPage() {
   const sortBy = (params.get('sortBy') as 'price_asc' | 'price_desc' | 'newest') ?? 'newest';
   const page = Math.max(1, Number(params.get('page') ?? '1'));
 
-  // URL stores dollar values — multiply ×100 for the API (which expects cents)
   const minPrice = rawMin ? Math.round(parseFloat(rawMin) * 100) : undefined;
   const maxPrice = rawMax ? Math.round(parseFloat(rawMax) * 100) : undefined;
 
@@ -58,7 +57,7 @@ export default function CatalogPage() {
   const filterPanel = (
     <div className="space-y-6">
       <CategoryFilter />
-      <div className="border-t border-gray-100 dark:border-gray-800 pt-6">
+      <div className="border-t border-gray-100 dark:border-white/10 pt-6">
         <PriceRangeFilter />
       </div>
     </div>
@@ -98,10 +97,9 @@ export default function CatalogPage() {
         <div className="flex-1 min-w-0">
           {/* Toolbar */}
           <div className="flex items-center gap-3 mb-4">
-            {/* Mobile filter button */}
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden flex items-center gap-2 px-3 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              className="lg:hidden flex items-center gap-2 px-3 py-2 text-sm border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors"
             >
               <SlidersHorizontal className="w-4 h-4" />
               Filters
@@ -113,7 +111,7 @@ export default function CatalogPage() {
             </button>
 
             <span className="hidden lg:block text-sm text-gray-400 dark:text-gray-500 flex-1">
-              {data ? `${data.total} item${data.total !== 1 ? 's' : ''}` : ' '}
+              {data ? `${data.total} item${data.total !== 1 ? 's' : ''}` : ' '}
             </span>
 
             <SortSelect />
@@ -129,8 +127,8 @@ export default function CatalogPage() {
               </div>
             ) : isError ? (
               <div className="flex flex-col items-center justify-center py-24 text-center">
-                <ShoppingBag className="w-14 h-14 text-gray-200 dark:text-gray-700 mb-4" />
-                <p className="text-gray-500 dark:text-gray-400 font-medium">
+                <ShoppingBag className="w-14 h-14 text-gray-200 dark:text-white/20 mb-4" />
+                <p className="text-gray-500 dark:text-gray-300 font-medium">
                   Could not load products
                 </p>
                 <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
@@ -139,7 +137,7 @@ export default function CatalogPage() {
               </div>
             ) : !data?.items.length ? (
               <div className="flex flex-col items-center justify-center py-24 text-center">
-                <ShoppingBag className="w-14 h-14 text-gray-200 dark:text-gray-700 mb-4" />
+                <ShoppingBag className="w-14 h-14 text-gray-200 dark:text-white/20 mb-4" />
                 <p className="text-gray-600 dark:text-gray-300 font-medium">No products found</p>
                 <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
                   Try adjusting your filters or search terms
@@ -170,12 +168,12 @@ export default function CatalogPage() {
             className="fixed inset-0 bg-black/40 z-40 lg:hidden animate-fade-in"
             onClick={() => setSidebarOpen(false)}
           />
-          <div className="fixed inset-y-0 left-0 w-72 bg-white dark:bg-gray-900 shadow-2xl z-50 lg:hidden animate-slide-in-left overflow-y-auto">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+          <div className="fixed inset-y-0 left-0 w-72 bg-white dark:bg-[#0d1226] border-r border-gray-200 dark:border-white/10 shadow-2xl z-50 lg:hidden animate-slide-in-left overflow-y-auto">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-white/10">
               <h2 className="font-semibold text-gray-900 dark:text-white">Filters</h2>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>

@@ -14,10 +14,10 @@ export default function ProductCard({ product }: Props) {
   return (
     <Link
       to={`/product/${product._id}`}
-      className="group block bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl dark:hover:shadow-indigo-950/40 hover:-translate-y-1 transition-all duration-300"
+      className="group block theme-card rounded-2xl overflow-hidden hover:shadow-xl dark:hover:shadow-indigo-950/60 hover:shadow-gray-200/80 hover:-translate-y-1 transition-all duration-300"
     >
       {/* Image */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-gray-50 dark:bg-gray-800">
+      <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-white/5">
         <img
           src={product.imageUrl}
           alt={product.name}
@@ -42,7 +42,7 @@ export default function ProductCard({ product }: Props) {
 
       {/* Content */}
       <div className="p-4">
-        <h3 className="font-semibold text-gray-900 dark:text-white text-sm leading-snug line-clamp-2 mb-2.5 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm leading-snug line-clamp-2 mb-2.5 group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">
           {product.name}
         </h3>
 
@@ -55,7 +55,7 @@ export default function ProductCard({ product }: Props) {
         </div>
 
         {lowStock && (
-          <p className="text-xs text-amber-600 dark:text-amber-400 font-medium mt-1.5">
+          <p className="text-xs text-amber-500 dark:text-amber-400 font-medium mt-1.5">
             Only {product.stock} left!
           </p>
         )}

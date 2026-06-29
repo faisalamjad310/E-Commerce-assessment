@@ -17,7 +17,7 @@ export default function OrderConfirmationPage() {
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-12 animate-fade-in">
       {/* Success header */}
       <div className="text-center mb-10">
-        <div className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mx-auto mb-4">
+        <div className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-500/20 flex items-center justify-center mx-auto mb-4">
           <CheckCircle className="w-10 h-10 text-green-600 dark:text-green-400" />
         </div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Order Confirmed!</h1>
@@ -32,17 +32,17 @@ export default function OrderConfirmationPage() {
       </div>
 
       {isLoading ? (
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 animate-pulse space-y-3">
+        <div className="theme-card rounded-2xl p-6 animate-pulse space-y-3">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-4 bg-gray-100 dark:bg-gray-800 rounded-full" />
+            <div key={i} className="h-4 bg-gray-100 dark:bg-white/10 rounded-full" />
           ))}
         </div>
       ) : order ? (
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+        <div className="theme-card rounded-2xl overflow-hidden">
           {/* Items */}
-          <div className="p-5 border-b border-gray-100 dark:border-gray-800">
+          <div className="p-5 border-b border-gray-100 dark:border-white/10">
             <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <Package className="w-4 h-4 text-indigo-500" />
+              <Package className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
               Items Ordered
             </h2>
             <div className="space-y-3">
@@ -91,7 +91,7 @@ export default function OrderConfirmationPage() {
       <div className="flex flex-col sm:flex-row gap-3 mt-8">
         <Link
           to="/orders"
-          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-200 dark:border-white/10 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/8 transition-colors"
         >
           <Package className="w-4 h-4" />
           View All Orders

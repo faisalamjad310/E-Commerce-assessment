@@ -24,11 +24,11 @@ function StepIndicator({ step }: { step: 1 | 2 }) {
         const active = step === num;
         return (
           <div key={s} className="flex items-center gap-3">
-            {i > 0 && <div className={`h-px w-12 ${step > 1 ? 'bg-indigo-400' : 'bg-gray-200 dark:bg-gray-700'}`} />}
+            {i > 0 && <div className={`h-px w-12 ${step > 1 ? 'bg-indigo-400' : 'bg-gray-200 dark:bg-white/15'}`} />}
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
               done  ? 'bg-indigo-600 text-white' :
-              active ? 'bg-indigo-600 text-white ring-4 ring-indigo-100 dark:ring-indigo-900/40' :
-                       'bg-gray-100 dark:bg-gray-800 text-gray-400'
+              active ? 'bg-indigo-600 text-white ring-4 ring-indigo-100 dark:ring-indigo-500/30' :
+                       'bg-gray-100 dark:bg-white/10 text-gray-400 dark:text-gray-500'
             }`}>
               {done ? <CheckCircle className="w-4 h-4" /> : num}
             </div>
@@ -88,7 +88,7 @@ export default function CheckoutPage() {
   }
 
   const orderSummary = (
-    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-5 space-y-3">
+    <div className="theme-card rounded-2xl p-5 space-y-3">
       <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-3">Order Summary</h3>
       <div className="space-y-2 max-h-48 overflow-y-auto">
         {items.map(item => (
@@ -96,7 +96,7 @@ export default function CheckoutPage() {
             <img
               src={item.imageUrl}
               alt={item.name}
-              className="w-10 h-10 object-cover rounded-lg border border-gray-200 dark:border-gray-700 shrink-0"
+              className="w-10 h-10 object-cover rounded-lg border border-gray-100 dark:border-white/10 shrink-0"
               onError={e => { (e.target as HTMLImageElement).src = 'https://placehold.co/40x40/e0e7ff/6366f1?text=?'; }}
             />
             <div className="flex-1 min-w-0">
@@ -109,7 +109,7 @@ export default function CheckoutPage() {
           </div>
         ))}
       </div>
-      <div className="border-t border-gray-200 dark:border-gray-700 pt-3 space-y-1.5 text-sm">
+      <div className="border-t border-gray-100 dark:border-white/10 pt-3 space-y-1.5 text-sm">
         <div className="flex justify-between text-gray-500 dark:text-gray-400">
           <span>Subtotal</span><span>{formatPrice(orderTotal)}</span>
         </div>
@@ -160,7 +160,7 @@ export default function CheckoutPage() {
                   <input
                     {...register(f.id)}
                     placeholder={f.placeholder}
-                    className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900/40 transition-all"
+                    className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-white/10 rounded-xl bg-white dark:bg-white/8 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 transition-all"
                   />
                   {errors[f.id] && (
                     <p className="text-xs text-red-500 mt-1">{errors[f.id]!.message}</p>
@@ -196,34 +196,34 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Fake form fields (UI only) */}
+              {/* Fake form fields */}
               <div className="space-y-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Card Number</label>
                   <input defaultValue="4242 4242 4242 4242" readOnly
-                    className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-500 font-mono cursor-not-allowed" />
+                    className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-white/10 rounded-xl bg-gray-50 dark:bg-white/5 text-gray-500 font-mono cursor-not-allowed" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Expiry</label>
                     <input defaultValue="12/28" readOnly
-                      className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-500 font-mono cursor-not-allowed" />
+                      className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-white/10 rounded-xl bg-gray-50 dark:bg-white/5 text-gray-500 font-mono cursor-not-allowed" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">CVV</label>
                     <input defaultValue="•••" readOnly
-                      className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-500 font-mono cursor-not-allowed" />
+                      className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-white/10 rounded-xl bg-gray-50 dark:bg-white/5 text-gray-500 font-mono cursor-not-allowed" />
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800/50 rounded-xl px-3 py-2">
+              <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/8 rounded-xl px-3 py-2">
                 <Lock className="w-3.5 h-3.5 shrink-0" />
                 Test environment — no real payment is processed
               </div>
 
               {error && (
-                <p className="text-sm text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-xl px-3 py-2">
+                <p className="text-sm text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-500/10 rounded-xl px-3 py-2">
                   {error}
                 </p>
               )}
@@ -231,7 +231,7 @@ export default function CheckoutPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setStep(1)}
-                  className="px-4 py-3 rounded-xl text-sm font-medium border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  className="px-4 py-3 rounded-xl text-sm font-medium border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors"
                 >
                   Back
                 </button>

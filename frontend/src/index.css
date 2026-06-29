@@ -25,7 +25,41 @@
   background-clip: text;
 }
 
-/* ────────── Auth page background ────────── */
+/* ────────── Storefront background — always dark gradient ────────── */
+.storefront-bg {
+  background:
+    radial-gradient(at 5%   0%,  hsla(240,100%,30%,0.40) 0px, transparent 52%),
+    radial-gradient(at 95%  8%,  hsla(270,100%,28%,0.35) 0px, transparent 52%),
+    radial-gradient(at 0%   65%, hsla(190,100%,25%,0.22) 0px, transparent 50%),
+    radial-gradient(at 100% 88%, hsla(310,100%,28%,0.22) 0px, transparent 50%),
+    radial-gradient(at 50%  45%, hsla(250,100%,20%,0.18) 0px, transparent 60%);
+  background-color: #08081a;
+  background-attachment: fixed;
+}
+
+/* Storefront glass card — dark semi-transparent surface */
+.sf-card {
+  background: rgba(15, 23, 42, 0.70);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Theme-aware card: white in light mode, glass in dark mode */
+.theme-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+.dark .theme-card {
+  background: rgba(15, 23, 42, 0.70);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+/* Auth page background ────────── */
 .auth-bg {
   background:
     radial-gradient(at 20% 25%, hsla(240, 100%, 78%, 0.18) 0px, transparent 55%),

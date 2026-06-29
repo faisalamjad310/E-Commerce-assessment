@@ -8,21 +8,21 @@ import { formatPrice } from '../../api/products';
 function CartSkeleton() {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 animate-pulse">
-      <div className="h-7 w-40 bg-gray-100 dark:bg-gray-800 rounded-full mb-8" />
+      <div className="h-7 w-40 bg-gray-100 dark:bg-white/10 rounded-full mb-8" />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-3">
           {[1, 2].map(i => (
-            <div key={i} className="flex gap-4 p-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800">
-              <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-xl shrink-0" />
+            <div key={i} className="flex gap-4 p-4 theme-card rounded-2xl">
+              <div className="w-20 h-20 bg-gray-100 dark:bg-white/10 rounded-xl shrink-0" />
               <div className="flex-1 space-y-2 pt-1">
-                <div className="h-4 bg-gray-100 dark:bg-gray-800 rounded-full w-3/4" />
-                <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded-full w-1/4" />
-                <div className="h-4 bg-gray-100 dark:bg-gray-800 rounded-full w-1/3 mt-2" />
+                <div className="h-4 bg-gray-100 dark:bg-white/10 rounded-full w-3/4" />
+                <div className="h-3 bg-gray-100 dark:bg-white/10 rounded-full w-1/4" />
+                <div className="h-4 bg-gray-100 dark:bg-white/10 rounded-full w-1/3 mt-2" />
               </div>
             </div>
           ))}
         </div>
-        <div className="h-52 bg-gray-100 dark:bg-gray-800 rounded-2xl" />
+        <div className="h-52 bg-gray-100 dark:bg-white/10 rounded-2xl" />
       </div>
     </div>
   );
@@ -52,11 +52,10 @@ export default function CartPage() {
     }
   }
 
-  // Not logged in
   if (!user) {
     return (
       <div className="max-w-5xl mx-auto px-4 py-20 text-center">
-        <ShoppingCart className="w-16 h-16 text-gray-200 dark:text-gray-700 mx-auto mb-4" />
+        <ShoppingCart className="w-16 h-16 text-gray-200 dark:text-white/20 mx-auto mb-4" />
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
           Sign in to view your cart
         </h2>
@@ -74,14 +73,12 @@ export default function CartPage() {
     );
   }
 
-  // Loading initial cart
   if (loading && items.length === 0) return <CartSkeleton />;
 
-  // Empty cart
   if (items.length === 0) {
     return (
       <div className="max-w-5xl mx-auto px-4 py-20 text-center">
-        <ShoppingBag className="w-16 h-16 text-gray-200 dark:text-gray-700 mx-auto mb-4" />
+        <ShoppingBag className="w-16 h-16 text-gray-200 dark:text-white/20 mx-auto mb-4" />
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
           Your cart is empty
         </h2>
@@ -118,14 +115,13 @@ export default function CartPage() {
             return (
               <div
                 key={item.productId}
-                className={`flex gap-4 p-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm transition-opacity ${busy ? 'opacity-60 pointer-events-none' : ''}`}
+                className={`flex gap-4 p-4 theme-card rounded-2xl transition-opacity ${busy ? 'opacity-60 pointer-events-none' : ''}`}
               >
-                {/* Image */}
                 <Link to={`/product/${item.productId}`} className="shrink-0">
                   <img
                     src={item.imageUrl}
                     alt={item.name}
-                    className="w-20 h-20 object-cover rounded-xl border border-gray-100 dark:border-gray-800"
+                    className="w-20 h-20 object-cover rounded-xl border border-gray-100 dark:border-white/10"
                     onError={e => {
                       (e.target as HTMLImageElement).src =
                         'https://placehold.co/80x80/e0e7ff/6366f1?text=?';
@@ -133,11 +129,10 @@ export default function CartPage() {
                   />
                 </Link>
 
-                {/* Info */}
                 <div className="flex-1 min-w-0">
                   <Link
                     to={`/product/${item.productId}`}
-                    className="font-medium text-gray-900 dark:text-white text-sm leading-snug hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors line-clamp-2"
+                    className="font-medium text-gray-900 dark:text-gray-100 text-sm leading-snug hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors line-clamp-2"
                   >
                     {item.name}
                   </Link>
@@ -146,33 +141,32 @@ export default function CartPage() {
                   </p>
 
                   <div className="flex items-center justify-between mt-3">
-                    {/* Qty controls */}
-                    <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                    <div className="flex items-center border border-gray-200 dark:border-white/10 rounded-lg overflow-hidden">
                       <button
                         onClick={() => handleQtyChange(item.productId, item.quantity - 1)}
                         disabled={item.quantity <= 1}
-                        className="px-2.5 py-1.5 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 transition-colors"
+                        className="px-2.5 py-1.5 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/10 disabled:opacity-40 transition-colors"
                       >
                         <Minus className="w-3.5 h-3.5" />
                       </button>
-                      <span className="w-8 text-center text-sm font-semibold text-gray-900 dark:text-white select-none">
+                      <span className="w-8 text-center text-sm font-semibold text-gray-900 dark:text-gray-100 select-none">
                         {item.quantity}
                       </span>
                       <button
                         onClick={() => handleQtyChange(item.productId, item.quantity + 1)}
-                        className="px-2.5 py-1.5 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                        className="px-2.5 py-1.5 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <span className="font-bold text-gray-900 dark:text-white text-sm">
+                      <span className="font-bold text-gray-900 dark:text-gray-100 text-sm">
                         {formatPrice(item.lineTotal)}
                       </span>
                       <button
                         onClick={() => handleRemove(item.productId)}
-                        className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                        className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/15 transition-colors"
                         aria-label="Remove item"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -187,7 +181,7 @@ export default function CartPage() {
 
         {/* Order summary */}
         <div className="lg:col-span-1">
-          <div className="sticky top-20 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-5">
+          <div className="sticky top-20 theme-card rounded-2xl p-5">
             <h2 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <Tag className="w-4 h-4 text-indigo-500" />
               Order Summary
@@ -202,7 +196,7 @@ export default function CartPage() {
                 <span>Shipping</span>
                 <span className="text-green-600 dark:text-green-400 font-medium">Free</span>
               </div>
-              <div className="border-t border-gray-100 dark:border-gray-800 pt-2.5 flex justify-between font-bold text-gray-900 dark:text-white text-base">
+              <div className="border-t border-gray-100 dark:border-white/10 pt-2.5 flex justify-between font-bold text-gray-900 dark:text-white text-base">
                 <span>Total</span>
                 <span className="gradient-text">{formatPrice(orderTotal)}</span>
               </div>

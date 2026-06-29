@@ -41,7 +41,7 @@ export default function Pagination({ page, totalPages }: Props) {
         onClick={() => goTo(page - 1)}
         disabled={page <= 1}
         aria-label="Previous page"
-        className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className="p-2 rounded-lg border border-gray-200 dark:border-white/10 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
         <ChevronLeft className="w-4 h-4" />
       </button>
@@ -58,7 +58,7 @@ export default function Pagination({ page, totalPages }: Props) {
             className={`min-w-[36px] h-9 px-2 rounded-lg text-sm font-medium transition-all ${
               p === page
                 ? 'btn-gradient text-white shadow-sm'
-                : 'border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                : 'border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/10'
             }`}
           >
             {p}
@@ -70,7 +70,7 @@ export default function Pagination({ page, totalPages }: Props) {
         onClick={() => goTo(page + 1)}
         disabled={page >= totalPages}
         aria-label="Next page"
-        className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className="p-2 rounded-lg border border-gray-200 dark:border-white/10 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
         <ChevronRight className="w-4 h-4" />
       </button>

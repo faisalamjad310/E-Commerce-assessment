@@ -8,9 +8,9 @@ function RecommendedCard({ product }: { product: Product }) {
   return (
     <Link
       to={`/product/${product._id}`}
-      className="group flex-shrink-0 w-40 sm:w-48 rounded-2xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md hover:border-indigo-100 dark:hover:border-indigo-900/50 transition-all"
+      className="group flex-shrink-0 w-40 sm:w-48 rounded-2xl overflow-hidden theme-card hover:shadow-md dark:hover:shadow-indigo-950/50 transition-all"
     >
-      <div className="aspect-square overflow-hidden bg-gray-50 dark:bg-gray-800">
+      <div className="aspect-square overflow-hidden bg-gray-100 dark:bg-white/5">
         <img
           src={product.imageUrl}
           alt={product.name}
@@ -27,7 +27,7 @@ function RecommendedCard({ product }: { product: Product }) {
         </p>
         <p className="text-sm font-bold gradient-text">{formatPrice(product.price)}</p>
         {product.stock === 0 && (
-          <p className="text-[10px] text-red-400 mt-0.5">Out of stock</p>
+          <p className="text-[10px] text-red-500 dark:text-red-400 mt-0.5">Out of stock</p>
         )}
       </div>
     </Link>
@@ -36,12 +36,12 @@ function RecommendedCard({ product }: { product: Product }) {
 
 function SkeletonCard() {
   return (
-    <div className="flex-shrink-0 w-40 sm:w-48 rounded-2xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 animate-pulse">
-      <div className="aspect-square bg-gray-100 dark:bg-gray-800" />
+    <div className="flex-shrink-0 w-40 sm:w-48 rounded-2xl overflow-hidden theme-card animate-pulse">
+      <div className="aspect-square bg-gray-100 dark:bg-white/8" />
       <div className="p-3 space-y-2">
-        <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded-full" />
-        <div className="h-3 w-2/3 bg-gray-100 dark:bg-gray-800 rounded-full" />
-        <div className="h-4 w-1/2 bg-gray-100 dark:bg-gray-800 rounded-full" />
+        <div className="h-3 bg-gray-100 dark:bg-white/10 rounded-full" />
+        <div className="h-3 w-2/3 bg-gray-100 dark:bg-white/10 rounded-full" />
+        <div className="h-4 w-1/2 bg-gray-100 dark:bg-white/10 rounded-full" />
       </div>
     </div>
   );
@@ -63,14 +63,14 @@ export default function RecommendedProducts({ excludeProductId }: { excludeProdu
       <div className="flex items-center gap-2 mb-4">
         {user ? (
           <>
-            <Sparkles className="w-4 h-4 text-indigo-500" />
+            <Sparkles className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
             <h2 className="text-base font-bold text-gray-900 dark:text-white">
               You might also like
             </h2>
           </>
         ) : (
           <>
-            <TrendingUp className="w-4 h-4 text-indigo-500" />
+            <TrendingUp className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
             <h2 className="text-base font-bold text-gray-900 dark:text-white">Trending Now</h2>
           </>
         )}

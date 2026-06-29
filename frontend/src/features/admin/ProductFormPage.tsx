@@ -164,13 +164,13 @@ export default function ProductFormPage() {
     <div className="max-w-3xl">
       <button
         onClick={() => navigate('/admin/products')}
-        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-indigo-600 transition-colors mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to products
       </button>
 
-      <h1 className="text-xl font-bold text-gray-900 mb-6">
+      <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
         {isEdit ? 'Edit Product' : 'Add New Product'}
       </h1>
 
@@ -179,7 +179,7 @@ export default function ProductFormPage() {
         <div className="grid grid-cols-1 sm:grid-cols-5 gap-6">
           {/* Image upload */}
           <div className="sm:col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
               Product Image <span className="text-red-500">*</span>
             </label>
 
@@ -205,7 +205,7 @@ export default function ProductFormPage() {
                     ? 'border-indigo-400 bg-indigo-50'
                     : errors.imageUrl
                       ? 'border-red-300 bg-red-50'
-                      : 'border-gray-200 bg-gray-50 hover:border-indigo-300 hover:bg-indigo-50/50'
+                      : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:border-indigo-300 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30'
                 }
               `}
             >
@@ -244,9 +244,9 @@ export default function ProductFormPage() {
                 </>
               ) : (
                 <>
-                  <ImageIcon className="w-8 h-8 text-gray-300 mb-2" />
-                  <p className="text-xs text-gray-500 font-medium">Click or drag to upload</p>
-                  <p className="text-[11px] text-gray-400 mt-1">JPEG, PNG, WebP, GIF · max 5 MB</p>
+                  <ImageIcon className="w-8 h-8 text-gray-300 dark:text-gray-600 mb-2" />
+                  <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Click or drag to upload</p>
+                  <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">JPEG, PNG, WebP, GIF · max 5 MB</p>
                 </>
               )}
             </div>
@@ -269,26 +269,26 @@ export default function ProductFormPage() {
           {/* Name + description */}
           <div className="sm:col-span-3 space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
                 Name <span className="text-red-500">*</span>
               </label>
               <input
                 {...register('name')}
                 placeholder="e.g. Wireless Noise-Cancelling Headphones"
-                className="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+                className="w-full px-3.5 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900/30 transition-all"
               />
               <FieldError msg={errors.name?.message} />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
                 Description <span className="text-sm text-red-500">*</span>
               </label>
               <textarea
                 {...register('description')}
                 rows={5}
                 placeholder="Describe the product…"
-                className="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all resize-none"
+                className="w-full px-3.5 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900/30 transition-all resize-none"
               />
               <FieldError msg={errors.description?.message} />
             </div>
@@ -296,13 +296,13 @@ export default function ProductFormPage() {
         </div>
 
         {/* Price / Category / Stock */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-white rounded-2xl border border-gray-100 p-5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
               Price ($) <span className="text-red-500">*</span>
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm select-none">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 text-sm select-none">
                 $
               </span>
               <input
@@ -310,21 +310,21 @@ export default function ProductFormPage() {
                 type="text"
                 inputMode="decimal"
                 placeholder="29.99"
-                className="w-full pl-7 pr-3.5 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+                className="w-full pl-7 pr-3.5 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900/30 transition-all"
               />
             </div>
             <FieldError msg={errors.priceDisplay?.message} />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
               Category <span className="text-red-500">*</span>
             </label>
             <input
               {...register('category')}
               list="categories-list"
               placeholder="Electronics"
-              className="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+              className="w-full px-3.5 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900/30 transition-all"
             />
             <datalist id="categories-list">
               {categoriesData?.map((c) => (
@@ -335,7 +335,7 @@ export default function ProductFormPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
               Stock <span className="text-red-500">*</span>
             </label>
             <input
@@ -343,7 +343,7 @@ export default function ProductFormPage() {
               type="number"
               min={0}
               placeholder="0"
-              className="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+              className="w-full px-3.5 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900/30 transition-all"
             />
             <FieldError msg={errors.stock?.message} />
           </div>
@@ -360,7 +360,7 @@ export default function ProductFormPage() {
           <button
             type="button"
             onClick={() => navigate('/admin/products')}
-            className="px-5 py-2.5 rounded-xl text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+            className="px-5 py-2.5 rounded-xl text-sm font-medium border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
             Cancel
           </button>

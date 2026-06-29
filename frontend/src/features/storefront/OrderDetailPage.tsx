@@ -16,7 +16,7 @@ const TIMELINE_STEPS: OrderStatus[] = ['pending', 'processing', 'shipped', 'deli
 function StatusTimeline({ status }: { status: OrderStatus }) {
   if (status === 'cancelled') {
     return (
-      <div className="px-3 py-2 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-sm font-medium inline-flex">
+      <div className="px-3 py-2 rounded-xl bg-red-50 dark:bg-red-500/15 text-red-600 dark:text-red-400 text-sm font-medium inline-flex">
         Order Cancelled
       </div>
     );
@@ -30,7 +30,7 @@ function StatusTimeline({ status }: { status: OrderStatus }) {
             <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
               i <= currentIdx
                 ? 'bg-indigo-600 text-white'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-400'
+                : 'bg-gray-100 dark:bg-white/10 text-gray-400 dark:text-gray-500'
             }`}>
               {i < currentIdx ? '✓' : i + 1}
             </div>
@@ -41,7 +41,7 @@ function StatusTimeline({ status }: { status: OrderStatus }) {
             </p>
           </div>
           {i < TIMELINE_STEPS.length - 1 && (
-            <div className={`flex-1 h-px mt-[-14px] mx-1 ${i < currentIdx ? 'bg-indigo-400' : 'bg-gray-200 dark:bg-gray-700'}`} />
+            <div className={`flex-1 h-px mt-[-14px] mx-1 ${i < currentIdx ? 'bg-indigo-400' : 'bg-gray-200 dark:bg-white/15'}`} />
           )}
         </div>
       ))}
@@ -61,10 +61,10 @@ export default function OrderDetailPage() {
   if (isLoading) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8 animate-pulse space-y-4">
-        <div className="h-4 w-28 bg-gray-100 dark:bg-gray-800 rounded-full" />
-        <div className="h-8 w-56 bg-gray-100 dark:bg-gray-800 rounded-full" />
-        <div className="h-40 bg-gray-100 dark:bg-gray-800 rounded-2xl" />
-        <div className="h-32 bg-gray-100 dark:bg-gray-800 rounded-2xl" />
+        <div className="h-4 w-28 bg-gray-100 dark:bg-white/10 rounded-full" />
+        <div className="h-8 w-56 bg-gray-100 dark:bg-white/10 rounded-full" />
+        <div className="h-40 bg-gray-100 dark:bg-white/10 rounded-2xl" />
+        <div className="h-32 bg-gray-100 dark:bg-white/10 rounded-2xl" />
       </div>
     );
   }
@@ -105,24 +105,24 @@ export default function OrderDetailPage() {
       </div>
 
       {/* Status timeline */}
-      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 mb-4">
+      <div className="theme-card rounded-2xl p-5 mb-4">
         <StatusTimeline status={order.status} />
       </div>
 
       {/* Items */}
-      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden mb-4">
-        <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-2">
-          <Package className="w-4 h-4 text-indigo-500" />
+      <div className="theme-card rounded-2xl overflow-hidden mb-4">
+        <div className="px-5 py-4 border-b border-gray-100 dark:border-white/10 flex items-center gap-2">
+          <Package className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
           <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
             {order.items.length} Item{order.items.length !== 1 ? 's' : ''}
           </h2>
         </div>
-        <div className="divide-y divide-gray-50 dark:divide-gray-800">
+        <div className="divide-y divide-gray-50 dark:divide-white/8">
           {order.items.map((item, i) => (
             <div key={i} className="flex items-center justify-between px-5 py-3.5">
               <div>
                 <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{item.name}</p>
-                <p className="text-xs text-gray-400 mt-0.5">
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                   {formatPrice(item.priceAtOrder)} × {item.quantity}
                 </p>
               </div>
@@ -132,7 +132,7 @@ export default function OrderDetailPage() {
             </div>
           ))}
         </div>
-        <div className="px-5 py-4 bg-gray-50 dark:bg-gray-800/50 space-y-1.5">
+        <div className="px-5 py-4 bg-gray-50 dark:bg-white/5 space-y-1.5">
           <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
             <span>Subtotal</span><span>{formatPrice(order.subtotal)}</span>
           </div>
@@ -140,7 +140,7 @@ export default function OrderDetailPage() {
             <span>Shipping</span>
             <span className="text-green-600 dark:text-green-400 font-medium">Free</span>
           </div>
-          <div className="flex justify-between font-bold text-gray-900 dark:text-white pt-1.5 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex justify-between font-bold text-gray-900 dark:text-white pt-1.5 border-t border-gray-200 dark:border-white/10">
             <span>Total</span>
             <span className="gradient-text">{formatPrice(order.total)}</span>
           </div>
@@ -149,18 +149,18 @@ export default function OrderDetailPage() {
 
       {/* Shipping + Payment */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
+        <div className="theme-card rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-3">
-            <MapPin className="w-4 h-4 text-indigo-500" />
+            <MapPin className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Shipping Address</h3>
           </div>
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{order.shippingAddress.name}</p>
           <p className="text-sm text-gray-500 dark:text-gray-400">{order.shippingAddress.address}</p>
           <p className="text-sm text-gray-500 dark:text-gray-400">{order.shippingAddress.city}</p>
         </div>
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
+        <div className="theme-card rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-3">
-            <CreditCard className="w-4 h-4 text-indigo-500" />
+            <CreditCard className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Payment</h3>
           </div>
           <p className="text-xs text-gray-400 mb-1">Reference</p>

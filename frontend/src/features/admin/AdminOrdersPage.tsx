@@ -47,7 +47,7 @@ function StatusSelect({
       className={`text-xs font-semibold rounded-full px-2.5 py-1 border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-300 disabled:opacity-60 ${STATUS_COLOR[order.status]}`}
     >
       {ALL_STATUSES.map((s) => (
-        <option key={s} value={s} className="bg-white text-gray-700 font-medium">
+        <option key={s} value={s} className="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-medium">
           {STATUS_LABEL[s]}
         </option>
       ))}
@@ -82,8 +82,8 @@ export default function AdminOrdersPage() {
     <div>
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Orders</h1>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Orders</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
             {data?.total != null ? `${data.total} orders total` : 'Loading…'}
           </p>
         </div>
@@ -98,37 +98,36 @@ export default function AdminOrdersPage() {
             className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
               statusFilter === tab.value
                 ? 'bg-indigo-600 text-white shadow-sm'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
             }`}
           >
             {tab.label}
-            {tab.value && data && statusFilter !== tab.value && null}
           </button>
         ))}
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 px-4 py-3 bg-red-50 text-red-700 rounded-xl mb-4 text-sm">
+        <div className="flex items-center gap-2 px-4 py-3 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400 rounded-xl mb-4 text-sm border border-red-100 dark:border-red-900/50">
           <AlertCircle className="w-4 h-4 shrink-0" />
           {error}
           <button
             onClick={() => setError(null)}
-            className="ml-auto text-red-400 hover:text-red-600"
+            className="ml-auto text-red-400 hover:text-red-600 dark:hover:text-red-300"
           >
             ×
           </button>
         </div>
       )}
 
-      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
         {isLoading ? (
-          <div className="p-10 text-center text-gray-400 text-sm animate-pulse">
+          <div className="p-10 text-center text-gray-400 dark:text-gray-500 text-sm animate-pulse">
             Loading orders…
           </div>
         ) : !data?.items.length ? (
           <div className="p-14 text-center">
-            <ShoppingBag className="w-12 h-12 text-gray-200 mx-auto mb-3" />
-            <p className="text-gray-500 font-medium">
+            <ShoppingBag className="w-12 h-12 text-gray-200 dark:text-gray-700 mx-auto mb-3" />
+            <p className="text-gray-500 dark:text-gray-400 font-medium">
               {statusFilter ? `No ${STATUS_LABEL[statusFilter].toLowerCase()} orders` : 'No orders yet'}
             </p>
           </div>
@@ -136,49 +135,49 @@ export default function AdminOrdersPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
-                  <th className="text-left px-4 py-3 font-semibold text-gray-500">Order</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-500 hidden md:table-cell">
+                <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+                  <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400">Order</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 hidden md:table-cell">
                     Customer
                   </th>
-                  <th className="text-center px-4 py-3 font-semibold text-gray-500 hidden sm:table-cell">
+                  <th className="text-center px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">
                     Items
                   </th>
-                  <th className="text-right px-4 py-3 font-semibold text-gray-500">Total</th>
-                  <th className="text-center px-4 py-3 font-semibold text-gray-500">Status</th>
-                  <th className="text-right px-4 py-3 font-semibold text-gray-500 hidden lg:table-cell">
+                  <th className="text-right px-4 py-3 font-semibold text-gray-500 dark:text-gray-400">Total</th>
+                  <th className="text-center px-4 py-3 font-semibold text-gray-500 dark:text-gray-400">Status</th>
+                  <th className="text-right px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 hidden lg:table-cell">
                     Date
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
                 {data.items.map((order) => (
-                  <tr key={order._id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={order._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                     <td className="px-4 py-3">
-                      <p className="font-mono text-xs font-semibold text-gray-700">
+                      <p className="font-mono text-xs font-semibold text-gray-700 dark:text-gray-300">
                         #{order._id.slice(-8).toUpperCase()}
                       </p>
                     </td>
                     <td className="px-4 py-3 hidden md:table-cell">
                       {order.userId ? (
                         <>
-                          <p className="font-medium text-gray-800 text-xs">{order.userId.name}</p>
-                          <p className="text-gray-400 text-xs">{order.userId.email}</p>
+                          <p className="font-medium text-gray-800 dark:text-gray-200 text-xs">{order.userId.name}</p>
+                          <p className="text-gray-400 dark:text-gray-500 text-xs">{order.userId.email}</p>
                         </>
                       ) : (
-                        <p className="text-gray-400 text-xs italic">Deleted user</p>
+                        <p className="text-gray-400 dark:text-gray-500 text-xs italic">Deleted user</p>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-center hidden sm:table-cell text-gray-500 text-xs">
+                    <td className="px-4 py-3 text-center hidden sm:table-cell text-gray-500 dark:text-gray-400 text-xs">
                       {order.items.length}
                     </td>
-                    <td className="px-4 py-3 text-right font-semibold text-gray-700">
+                    <td className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300">
                       {formatPrice(order.total)}
                     </td>
                     <td className="px-4 py-3 text-center">
                       <StatusSelect order={order} onError={(msg) => setError(msg)} />
                     </td>
-                    <td className="px-4 py-3 text-right hidden lg:table-cell text-gray-400 text-xs">
+                    <td className="px-4 py-3 text-right hidden lg:table-cell text-gray-400 dark:text-gray-500 text-xs">
                       {formatDate(order.createdAt)}
                     </td>
                   </tr>
@@ -190,22 +189,22 @@ export default function AdminOrdersPage() {
 
         {/* Pagination */}
         {data && data.totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-gray-50">
-            <p className="text-xs text-gray-500">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Page {data.page} of {data.totalPages} · {data.total} orders
             </p>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setPage((p) => p - 1)}
                 disabled={page === 1}
-                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setPage((p) => p + 1)}
                 disabled={page === data.totalPages}
-                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

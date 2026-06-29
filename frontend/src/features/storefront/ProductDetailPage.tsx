@@ -10,17 +10,17 @@ import RecommendedProducts from '../../components/RecommendedProducts';
 function DetailSkeleton() {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 animate-pulse">
-      <div className="h-4 w-28 bg-gray-100 dark:bg-gray-800 rounded-full mb-8" />
+      <div className="h-4 w-28 bg-gray-100 dark:bg-white/10 rounded-full mb-8" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-2xl" />
+        <div className="aspect-square bg-gray-100 dark:bg-white/10 rounded-2xl" />
         <div className="space-y-4 pt-2">
-          <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded-full w-1/4" />
-          <div className="h-8 bg-gray-100 dark:bg-gray-800 rounded-full w-3/4" />
-          <div className="h-7 bg-gray-100 dark:bg-gray-800 rounded-full w-1/3" />
+          <div className="h-5 bg-gray-100 dark:bg-white/10 rounded-full w-1/4" />
+          <div className="h-8 bg-gray-100 dark:bg-white/10 rounded-full w-3/4" />
+          <div className="h-7 bg-gray-100 dark:bg-white/10 rounded-full w-1/3" />
           <div className="space-y-2 pt-2">
-            <div className="h-3.5 bg-gray-100 dark:bg-gray-800 rounded-full" />
-            <div className="h-3.5 bg-gray-100 dark:bg-gray-800 rounded-full w-5/6" />
-            <div className="h-3.5 bg-gray-100 dark:bg-gray-800 rounded-full w-4/5" />
+            <div className="h-3.5 bg-gray-100 dark:bg-white/10 rounded-full" />
+            <div className="h-3.5 bg-gray-100 dark:bg-white/10 rounded-full w-5/6" />
+            <div className="h-3.5 bg-gray-100 dark:bg-white/10 rounded-full w-4/5" />
           </div>
         </div>
       </div>
@@ -88,7 +88,6 @@ export default function ProductDetailPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 animate-fade-in">
-      {/* Back link */}
       <Link
         to="/"
         className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors mb-8"
@@ -99,7 +98,7 @@ export default function ProductDetailPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14">
         {/* Product image */}
-        <div className="aspect-square rounded-2xl overflow-hidden bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-800">
+        <div className="aspect-square rounded-2xl overflow-hidden bg-gray-100 dark:bg-white/5 border border-gray-100 dark:border-white/10">
           <img
             src={product.imageUrl}
             alt={product.name}
@@ -113,33 +112,28 @@ export default function ProductDetailPage() {
 
         {/* Product info */}
         <div className="flex flex-col">
-          {/* Category badge */}
-          <span className="inline-flex self-start px-3 py-1 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 text-xs font-semibold rounded-full mb-3">
+          <span className="inline-flex self-start px-3 py-1 bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 text-xs font-semibold rounded-full mb-3">
             {product.category}
           </span>
 
-          {/* Name */}
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white leading-tight mb-3">
             {product.name}
           </h1>
 
-          {/* Price */}
           <div className="text-3xl font-extrabold gradient-text mb-5">
             {formatPrice(product.price)}
           </div>
 
-          {/* Description */}
           <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-6 flex-1">
             {product.description}
           </p>
 
-          {/* Stock status */}
           <div className="flex items-center gap-2 mb-6">
             <Package className="w-4 h-4 text-gray-400 shrink-0" />
             {outOfStock ? (
               <span className="text-sm font-medium text-red-500">Out of stock</span>
             ) : product.stock <= 5 ? (
-              <span className="text-sm font-medium text-amber-600 dark:text-amber-400">
+              <span className="text-sm font-medium text-amber-500 dark:text-amber-400">
                 Only {product.stock} left in stock — order soon
               </span>
             ) : (
@@ -152,20 +146,18 @@ export default function ProductDetailPage() {
           {outOfStock ? (
             <button
               disabled
-              className="w-full py-3.5 rounded-xl font-semibold text-sm bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed"
+              className="w-full py-3.5 rounded-xl font-semibold text-sm bg-gray-100 dark:bg-white/10 text-gray-400 dark:text-gray-500 cursor-not-allowed"
             >
               Out of Stock
             </button>
           ) : (
             <>
-              {/* Qty + Add to Cart */}
               <div className="flex items-stretch gap-3 mb-3">
-                {/* Quantity selector */}
-                <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shrink-0">
+                <div className="flex items-center border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden shrink-0">
                   <button
                     onClick={() => setQty(q => Math.max(1, q - 1))}
                     disabled={qty <= 1}
-                    className="px-3 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 transition-colors"
+                    className="px-3 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/10 disabled:opacity-40 transition-colors"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
@@ -175,13 +167,12 @@ export default function ProductDetailPage() {
                   <button
                     onClick={() => setQty(q => Math.min(maxQty, q + 1))}
                     disabled={qty >= maxQty}
-                    className="px-3 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 transition-colors"
+                    className="px-3 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/10 disabled:opacity-40 transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
                 </div>
 
-                {/* Add to cart button */}
                 <button
                   onClick={handleAddToCart}
                   disabled={adding}
