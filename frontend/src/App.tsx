@@ -8,6 +8,7 @@ import LandingPage from './features/storefront/LandingPage';
 import CatalogPage from './features/storefront/CatalogPage';
 import ProductDetailPage from './features/storefront/ProductDetailPage';
 import CartPage from './features/storefront/CartPage';
+import WishlistPage from './features/storefront/WishlistPage';
 import CheckoutPage from './features/storefront/CheckoutPage';
 import OrderConfirmationPage from './features/storefront/OrderConfirmationPage';
 import OrderHistoryPage from './features/storefront/OrderHistoryPage';
@@ -52,6 +53,7 @@ export default function App() {
         <Route path="/shop" element={<CatalogPage />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/order-confirmation/:orderId" element={<OrderConfirmationPage />} />
         <Route

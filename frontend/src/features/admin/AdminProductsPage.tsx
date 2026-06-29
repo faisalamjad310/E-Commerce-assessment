@@ -1,18 +1,46 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Edit, Trash2, Package, AlertCircle } from 'lucide-react';
+import { Plus, Edit, Trash2, Package, AlertCircle, Search, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { adminProductsApi } from '../../api/admin';
 import { formatPrice } from '../../api/products';
+
+const PAGE_SIZE = 10;
+
+function getPageNumbers(page: number, totalPages: number): (number | '...')[] {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+  const pages: (number | '...')[] = [1];
+  if (page > 3) pages.push('...');
+  for (let i = Math.max(2, page - 1); i <= Math.min(totalPages - 1, page + 1); i++) {
+    pages.push(i);
+  }
+  if (page < totalPages - 2) pages.push('...');
+  pages.push(totalPages);
+  return pages;
+}
 
 export default function AdminProductsPage() {
   const queryClient = useQueryClient();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setDebouncedSearch(searchInput);
+      setPage(1);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [searchInput]);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['admin-products'],
-    queryFn: () => adminProductsApi.getAll(1, 48),
+    queryKey: ['admin-products', page, debouncedSearch],
+    queryFn: () => adminProductsApi.getAll(page, PAGE_SIZE, debouncedSearch || undefined),
+    placeholderData: (prev) => prev,
   });
 
   const deleteMutation = useMutation({
@@ -36,6 +64,8 @@ export default function AdminProductsPage() {
     setError(null);
     deleteMutation.mutate(id);
   }
+
+  const totalPages = data?.totalPages ?? 1;
 
   return (
     <div>
@@ -62,109 +92,185 @@ export default function AdminProductsPage() {
         </div>
       )}
 
+      {/* Search */}
+      <div className="mb-4">
+        <div className="relative w-full sm:w-80">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 pointer-events-none" />
+          <input
+            type="text"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Search by name…"
+            className="w-full pl-9 pr-8 py-2.5 text-sm bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 dark:focus:border-indigo-500 transition-colors"
+          />
+          {searchInput && (
+            <button
+              onClick={() => setSearchInput('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              aria-label="Clear search"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+      </div>
+
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
-        {isLoading ? (
+        {isLoading && !data ? (
           <div className="p-10 text-center text-gray-400 dark:text-gray-500 text-sm animate-pulse">
             Loading products…
           </div>
         ) : !data?.items.length ? (
           <div className="p-14 text-center">
             <Package className="w-12 h-12 text-gray-200 dark:text-gray-700 mx-auto mb-3" />
-            <p className="text-gray-500 dark:text-gray-400 font-medium mb-1">No products yet</p>
-            <p className="text-sm text-gray-400 dark:text-gray-500 mb-4">Add your first product to get started.</p>
-            <Link
-              to="/admin/products/new"
-              className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white rounded-xl"
-            >
-              <Plus className="w-4 h-4" />
-              Add Product
-            </Link>
+            <p className="text-gray-500 dark:text-gray-400 font-medium mb-1">
+              {debouncedSearch ? `No products matching "${debouncedSearch}"` : 'No products yet'}
+            </p>
+            <p className="text-sm text-gray-400 dark:text-gray-500 mb-4">
+              {debouncedSearch ? 'Try a different search term.' : 'Add your first product to get started.'}
+            </p>
+            {!debouncedSearch && (
+              <Link
+                to="/admin/products/new"
+                className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white rounded-xl"
+              >
+                <Plus className="w-4 h-4" />
+                Add Product
+              </Link>
+            )}
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
-                  <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 w-14">
-                    Image
-                  </th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400">Name</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 hidden md:table-cell">
-                    Category
-                  </th>
-                  <th className="text-right px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">
-                    Price
-                  </th>
-                  <th className="text-right px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">
-                    Stock
-                  </th>
-                  <th className="text-right px-4 py-3 font-semibold text-gray-500 dark:text-gray-400">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
-                {data.items.map((product) => (
-                  <tr key={product._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                    <td className="px-4 py-3">
-                      <img
-                        src={product.imageUrl}
-                        alt={product.name}
-                        className="w-10 h-10 object-cover rounded-lg border border-gray-100 dark:border-gray-700"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src =
-                            'https://placehold.co/40x40/e0e7ff/6366f1?text=?';
-                        }}
-                      />
-                    </td>
-                    <td className="px-4 py-3">
-                      <p className="font-medium text-gray-900 dark:text-gray-100 max-w-[200px] truncate">
-                        {product.name}
-                      </p>
-                    </td>
-                    <td className="px-4 py-3 hidden md:table-cell">
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400">
-                        {product.category}
+          <>
+            <div className={`overflow-x-auto transition-opacity ${isLoading ? 'opacity-60' : 'opacity-100'}`}>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+                    <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 w-14">
+                      Image
+                    </th>
+                    <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400">Name</th>
+                    <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 hidden md:table-cell">
+                      Category
+                    </th>
+                    <th className="text-right px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">
+                      Price
+                    </th>
+                    <th className="text-right px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">
+                      Stock
+                    </th>
+                    <th className="text-right px-4 py-3 font-semibold text-gray-500 dark:text-gray-400">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
+                  {data.items.map((product) => (
+                    <tr key={product._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                      <td className="px-4 py-3">
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="w-10 h-10 object-cover rounded-lg border border-gray-100 dark:border-gray-700"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src =
+                              'https://placehold.co/40x40/e0e7ff/6366f1?text=?';
+                          }}
+                        />
+                      </td>
+                      <td className="px-4 py-3">
+                        <p className="font-medium text-gray-900 dark:text-gray-100 max-w-[200px] truncate">
+                          {product.name}
+                        </p>
+                      </td>
+                      <td className="px-4 py-3 hidden md:table-cell">
+                        <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400">
+                          {product.category}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right hidden sm:table-cell font-medium text-gray-700 dark:text-gray-300">
+                        {formatPrice(product.price)}
+                      </td>
+                      <td className="px-4 py-3 text-right hidden sm:table-cell">
+                        <span
+                          className={`font-medium ${
+                            product.stock === 0
+                              ? 'text-red-500'
+                              : product.stock <= 5
+                                ? 'text-amber-500'
+                                : 'text-gray-700 dark:text-gray-300'
+                          }`}
+                        >
+                          {product.stock}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Link
+                            to={`/admin/products/${product._id}/edit`}
+                            className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors"
+                            title="Edit"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Link>
+                          <button
+                            onClick={() => handleDelete(product._id, product.name)}
+                            disabled={deletingId === product._id}
+                            className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors disabled:opacity-40"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-800">
+                <p className="text-xs text-gray-400 dark:text-gray-500">
+                  Page {page} of {totalPages} · {data.total} products
+                </p>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+
+                  {getPageNumbers(page, totalPages).map((p, i) =>
+                    p === '...' ? (
+                      <span key={`ellipsis-${i}`} className="px-1 text-xs text-gray-400 dark:text-gray-500">
+                        …
                       </span>
-                    </td>
-                    <td className="px-4 py-3 text-right hidden sm:table-cell font-medium text-gray-700 dark:text-gray-300">
-                      {formatPrice(product.price)}
-                    </td>
-                    <td className="px-4 py-3 text-right hidden sm:table-cell">
-                      <span
-                        className={`font-medium ${
-                          product.stock === 0
-                            ? 'text-red-500'
-                            : product.stock <= 5
-                              ? 'text-amber-500'
-                              : 'text-gray-700 dark:text-gray-300'
+                    ) : (
+                      <button
+                        key={p}
+                        onClick={() => setPage(p as number)}
+                        className={`min-w-[28px] h-7 px-1.5 rounded-lg text-xs font-medium transition-colors ${
+                          p === page
+                            ? 'bg-indigo-600 text-white'
+                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
                         }`}
                       >
-                        {product.stock}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        <Link
-                          to={`/admin/products/${product._id}/edit`}
-                          className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors"
-                          title="Edit"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(product._id, product.name)}
-                          disabled={deletingId === product._id}
-                          className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors disabled:opacity-40"
-                          title="Delete"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                        {p}
+                      </button>
+                    ),
+                  )}
+
+                  <button
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                    className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

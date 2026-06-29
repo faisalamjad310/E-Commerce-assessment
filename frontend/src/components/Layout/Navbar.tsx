@@ -1,8 +1,9 @@
 import { useRef, useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
-import { ShoppingCart, User, LogOut, LogIn, Search, Sun, Moon, ChevronDown, LayoutDashboard, Store } from 'lucide-react';
+import { ShoppingCart, Heart, User, LogOut, LogIn, Search, Sun, Moon, ChevronDown, LayoutDashboard, Store } from 'lucide-react';
 import { useAuth } from '../../lib/auth';
 import { useCart } from '../../lib/cart';
+import { useWishlist } from '../../lib/wishlist';
 import { useTheme } from '../../lib/theme';
 import CartVerseLogo from '../CartVerseLogo';
 import { productsApi, formatPrice } from '../../api/products';
@@ -11,6 +12,7 @@ import type { Product } from '../../api/products';
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { itemCount } = useCart();
+  const { count: wishlistCount } = useWishlist();
   const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -181,10 +183,24 @@ export default function Navbar() {
             {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
 
+          {/* Wishlist */}
+          <Link
+            to="/wishlist"
+            className="relative p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-rose-500 dark:hover:text-rose-400 transition-all"
+            aria-label="Wishlist"
+          >
+            <Heart className={`w-[18px] h-[18px] transition-colors ${wishlistCount > 0 ? 'fill-rose-500 text-rose-500' : ''}`} />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-rose-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold leading-none">
+                {wishlistCount > 99 ? '99+' : wishlistCount}
+              </span>
+            )}
+          </Link>
+
           {/* Cart */}
           <Link
             to="/cart"
-            className="relative p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all"
+            className={`relative p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all ${itemCount > 0 ? 'cart-has-items text-indigo-600 dark:text-indigo-400' : ''}`}
           >
             <ShoppingCart className="w-[18px] h-[18px]" />
             {itemCount > 0 && (

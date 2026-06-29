@@ -11,11 +11,11 @@ export interface AdminProductPayload {
 }
 
 export const adminProductsApi = {
-  getAll: (page = 1, limit = 48) =>
+  getAll: (page = 1, limit = 10, search?: string) =>
     api
       .get<{ items: Product[]; total: number; page: number; totalPages: number }>(
         '/api/products',
-        { params: { page, limit, sortBy: 'newest' } },
+        { params: { page, limit, sortBy: 'newest', ...(search ? { search } : {}) } },
       )
       .then((r) => r.data),
 

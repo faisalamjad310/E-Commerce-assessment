@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { SlidersHorizontal, X, ShoppingBag } from 'lucide-react';
 import { productsApi } from '../../api/products';
@@ -22,9 +22,25 @@ function SkeletonCard() {
   );
 }
 
+function FilterChip({ label, onClear }: { label: string; onClear: () => void }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 bg-indigo-50 dark:bg-indigo-500/15 border border-indigo-200 dark:border-indigo-500/30 text-indigo-700 dark:text-indigo-300 text-xs font-semibold rounded-full animate-fade-in">
+      {label}
+      <button
+        onClick={onClear}
+        className="w-4 h-4 rounded-full bg-indigo-200 dark:bg-indigo-500/30 hover:bg-red-100 dark:hover:bg-red-500/30 hover:text-red-600 flex items-center justify-center transition-colors shrink-0"
+        aria-label={`Remove filter: ${label}`}
+      >
+        <X className="w-2.5 h-2.5" />
+      </button>
+    </span>
+  );
+}
+
 export default function CatalogPage() {
   const [params] = useSearchParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
 
   const search = params.get('search') ?? undefined;
   const category = params.get('category') ?? undefined;
@@ -54,6 +70,13 @@ export default function CatalogPage() {
 
   const activeFilterCount = [search, category, rawMin, rawMax].filter(Boolean).length;
 
+  function clearFilter(key: string) {
+    const next = new URLSearchParams(params);
+    next.delete(key);
+    next.delete('page');
+    navigate(`/shop?${next.toString()}`);
+  }
+
   const filterPanel = (
     <div className="space-y-6">
       <CategoryFilter />
@@ -66,10 +89,14 @@ export default function CatalogPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
       {/* Header */}
-      <div className="mb-6">
+      <div className="relative mb-8 pb-6 border-b border-gray-200 dark:border-white/10 overflow-hidden">
+        <div className="absolute -top-6 left-0 w-48 h-24 bg-indigo-500/10 dark:bg-indigo-500/8 blur-2xl rounded-full pointer-events-none" />
         {search ? (
-          <>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div>
+            <p className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold uppercase tracking-widest mb-1.5">
+              Search results
+            </p>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
               Results for <span className="gradient-text">"{search}"</span>
             </h1>
             {data && (
@@ -77,13 +104,23 @@ export default function CatalogPage() {
                 {data.total} product{data.total !== 1 ? 's' : ''} found
               </p>
             )}
-          </>
+          </div>
         ) : category ? (
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            <span className="gradient-text">{category}</span>
-          </h1>
+          <div>
+            <p className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold uppercase tracking-widest mb-1.5">
+              Category
+            </p>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
+              <span className="gradient-text">{category}</span>
+            </h1>
+          </div>
         ) : (
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">All Products</h1>
+          <div>
+            <p className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold uppercase tracking-widest mb-1.5">
+              Collection
+            </p>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">All Products</h1>
+          </div>
         )}
       </div>
 
@@ -116,6 +153,31 @@ export default function CatalogPage() {
 
             <SortSelect />
           </div>
+
+          {/* Active filter chips */}
+          {activeFilterCount > 0 && (
+            <div className="flex items-center gap-2 flex-wrap mb-4 animate-fade-in">
+              <span className="text-xs text-gray-400 dark:text-gray-500 font-medium shrink-0">Active:</span>
+              {search && (
+                <FilterChip label={`"${search}"`} onClear={() => clearFilter('search')} />
+              )}
+              {category && (
+                <FilterChip label={category} onClear={() => clearFilter('category')} />
+              )}
+              {rawMin && (
+                <FilterChip label={`Min $${rawMin}`} onClear={() => clearFilter('minPrice')} />
+              )}
+              {rawMax && (
+                <FilterChip label={`Max $${rawMax}`} onClear={() => clearFilter('maxPrice')} />
+              )}
+              <button
+                onClick={() => navigate('/shop')}
+                className="text-xs text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 font-semibold ml-1 transition-colors"
+              >
+                Clear all ×
+              </button>
+            </div>
+          )}
 
           {/* Grid */}
           <div className={isFetching && !isLoading ? 'opacity-60 transition-opacity duration-200' : ''}>

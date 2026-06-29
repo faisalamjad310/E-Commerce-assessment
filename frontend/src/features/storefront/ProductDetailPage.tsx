@@ -1,10 +1,17 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, ShoppingCart, Package, Plus, Minus, CheckCircle } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Heart, Package, Plus, Minus, CheckCircle, Truck, ShieldCheck, RefreshCw } from 'lucide-react';
 import { productsApi, formatPrice } from '../../api/products';
 import { useCart } from '../../lib/cart';
+import { useWishlist } from '../../lib/wishlist';
 import RecommendedProducts from '../../components/RecommendedProducts';
+
+const TRUST = [
+  { icon: Truck,       label: 'Free Delivery',  sub: 'On orders over $50'    },
+  { icon: ShieldCheck, label: 'Secure Payment', sub: '256-bit SSL encryption' },
+  { icon: RefreshCw,   label: '30-Day Returns', sub: 'No questions asked'     },
+];
 
 function DetailSkeleton() {
   return (
@@ -30,6 +37,7 @@ function DetailSkeleton() {
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { addItem } = useCart();
+  const { toggle, isWishlisted } = useWishlist();
 
   const [qty, setQty] = useState(1);
   const [adding, setAdding] = useState(false);
@@ -82,6 +90,8 @@ export default function ProductDetailPage() {
 
   const maxQty = Math.min(product.stock, 10);
   const outOfStock = product.stock === 0;
+  const wishlisted = isWishlisted(product._id);
+
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 animate-fade-in">
@@ -93,7 +103,7 @@ export default function ProductDetailPage() {
         Back to catalog
       </Link>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 md:items-start">
         {/* Product image */}
         <div className="aspect-square rounded-2xl overflow-hidden bg-gray-100 dark:bg-white/5 border border-gray-100 dark:border-white/10">
           <img
@@ -108,7 +118,7 @@ export default function ProductDetailPage() {
         </div>
 
         {/* Product info */}
-        <div className="flex flex-col">
+        <div className="flex flex-col md:sticky md:top-24">
           <span className="inline-flex self-start px-3 py-1 bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 text-xs font-semibold rounded-full mb-3">
             {product.category}
           </span>
@@ -149,6 +159,12 @@ export default function ProductDetailPage() {
             </button>
           ) : (
             <>
+              {/* Delivery estimate */}
+              <div className="flex items-center gap-2 mb-4 text-sm text-emerald-700 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 rounded-xl px-3.5 py-2.5">
+                <Truck className="w-4 h-4 shrink-0" />
+                <span>Free delivery — arrives in 2–4 business days</span>
+              </div>
+
               <div className="flex items-stretch gap-3 mb-3">
                 <div className="flex items-center border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden shrink-0">
                   <button
@@ -198,6 +214,37 @@ export default function ProductDetailPage() {
               )}
             </>
           )}
+
+          {/* Wishlist toggle */}
+          <button
+            onClick={() => toggle(product._id)}
+            className={`mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-semibold text-sm border-2 transition-all ${
+              wishlisted
+                ? 'border-rose-300 dark:border-rose-500/50 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                : 'border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:border-rose-300 dark:hover:border-rose-500/40 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10'
+            }`}
+          >
+            <Heart className={`w-4 h-4 transition-all ${wishlisted ? 'fill-rose-500 text-rose-500' : ''}`} />
+            {wishlisted ? 'Saved to Wishlist' : 'Add to Wishlist'}
+          </button>
+
+          {/* Trust badges */}
+          <div className="grid grid-cols-3 gap-2 mt-6 pt-5 border-t border-gray-100 dark:border-white/10">
+            {TRUST.map(({ icon: Icon, label, sub }) => (
+              <div
+                key={label}
+                className="flex flex-col items-center text-center gap-2 p-3 rounded-xl bg-gray-50 dark:bg-white/5 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-colors cursor-default"
+              >
+                <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-500/15 flex items-center justify-center">
+                  <Icon className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold text-gray-800 dark:text-gray-200 leading-tight">{label}</p>
+                  <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5 leading-tight">{sub}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

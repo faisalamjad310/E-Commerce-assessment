@@ -39,7 +39,11 @@ JWT_SECRET=change_me_to_a_long_random_string
 JWT_EXPIRES_IN=7d
 FRONTEND_URL=http://localhost:5173
 PORT=3000
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
 ```
+
+`STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` are required for checkout. Use your Stripe test-mode keys from the [Stripe Dashboard](https://dashboard.stripe.com/test/apikeys). Leave both as placeholders to keep the app running; the checkout flow will error only when payment is actually submitted.
 
 ### 2 — Frontend environment
 
@@ -119,9 +123,27 @@ Product images are uploaded to `backend/public/uploads/` via the admin panel and
 
 ---
 
-## Payment note
+## Payment
 
-Checkout uses a **mock payment** — no Stripe key is needed. The payment step captures card details in the UI for realism but does not call any external service.
+Checkout uses **Stripe** in test mode. Add your `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` to `backend/.env`. No real charges are made; use Stripe's test card `4242 4242 4242 4242` (any future expiry, any CVC) at checkout.
+
+---
+
+## Features
+
+### Storefront
+- **Landing page** — hero, category grid, featured products, and trust badges
+- **Catalog** — search, category filter, price range, sort, pagination
+- **Product detail** — image, description, quantity picker, add to cart, personalised recommendations
+- **Guest cart** — cart persists in `localStorage` for unauthenticated users and merges into the server cart on login
+- **Wishlist** — save products to a local wishlist (persists via `localStorage`), move items to cart
+- **Checkout** — two-step: shipping address → Stripe payment
+- **Order history** — per-order status timeline
+
+### Admin panel
+- **Dashboard** — revenue, order counts, top-5 products (Recharts)
+- **Products** — full CRUD with drag-and-drop image upload
+- **Orders** — status filter, inline status update
 
 ---
 

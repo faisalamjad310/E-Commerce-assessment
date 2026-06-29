@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Tag } from 'lucide-react';
+import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Tag, ShieldCheck, Lock } from 'lucide-react';
 import { useCart } from '../../lib/cart';
 import { formatPrice } from '../../api/products';
 
@@ -173,6 +173,10 @@ export default function CartPage() {
                 <span>Shipping</span>
                 <span className="text-green-600 dark:text-green-400 font-medium">Free</span>
               </div>
+              <div className="flex justify-between text-gray-600 dark:text-gray-400">
+                <span>Estimated delivery</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-medium">2–4 days</span>
+              </div>
               <div className="border-t border-gray-100 dark:border-white/10 pt-2.5 flex justify-between font-bold text-gray-900 dark:text-white text-base">
                 <span>Total</span>
                 <span className="gradient-text">{formatPrice(orderTotal)}</span>
@@ -181,11 +185,29 @@ export default function CartPage() {
 
             <button
               onClick={() => navigate('/checkout')}
-              className="mt-5 w-full btn-gradient flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm text-white shadow-sm"
+              className="mt-5 w-full btn-gradient flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-sm text-white shadow-md shadow-indigo-500/20"
             >
               Proceed to Checkout
               <ArrowRight className="w-4 h-4" />
             </button>
+
+            {/* Security assurance */}
+            <div className="mt-3 flex flex-col items-center gap-1.5">
+              <div className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500">
+                <Lock className="w-3 h-3" />
+                <span>Secured by 256-bit SSL encryption</span>
+              </div>
+              <div className="flex items-center gap-3">
+                {['Visa', 'MC', 'Amex', 'PayPal', 'Stripe'].map(m => (
+                  <span
+                    key={m}
+                    className="text-[9px] font-bold px-1.5 py-0.5 border border-gray-200 dark:border-white/10 rounded text-gray-400 dark:text-gray-500 tracking-wide"
+                  >
+                    {m}
+                  </span>
+                ))}
+              </div>
+            </div>
 
             <Link
               to="/"

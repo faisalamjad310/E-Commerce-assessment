@@ -48,10 +48,10 @@ const HERO_IMG =
   'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900&q=80';
 
 const STATS = [
-  { icon: Package, value: '500+', label: 'Products' },
-  { icon: Zap, value: 'Fast', label: 'Delivery' },
-  { icon: ShieldCheck, value: 'Secure', label: 'Payments' },
-  { icon: RefreshCw, value: '30-Day', label: 'Returns' },
+  { icon: Package,     value: '500+',   label: 'Products', color: 'from-indigo-500 to-violet-500', glow: 'shadow-indigo-500/30' },
+  { icon: Zap,         value: 'Fast',   label: 'Delivery', color: 'from-amber-400 to-orange-500',  glow: 'shadow-orange-400/30' },
+  { icon: ShieldCheck, value: 'Secure', label: 'Payments', color: 'from-emerald-400 to-teal-500',  glow: 'shadow-emerald-400/30' },
+  { icon: RefreshCw,   value: '30-Day', label: 'Returns',  color: 'from-cyan-400 to-blue-500',     glow: 'shadow-cyan-400/30' },
 ];
 
 const HOW_STEPS = [
@@ -118,10 +118,19 @@ export default function LandingPage() {
       <section className="relative min-h-[calc(100vh-64px)] flex items-center overflow-hidden">
         {/* Animated blobs */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-indigo-600/20 blur-3xl animate-blob-1" />
-          <div className="absolute top-1/4 -right-32 w-[400px] h-[400px] rounded-full bg-violet-600/15 blur-3xl animate-blob-2" />
-          <div className="absolute -bottom-32 left-1/3 w-[350px] h-[350px] rounded-full bg-cyan-600/10 blur-3xl animate-blob-3" />
+          <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-indigo-600/25 blur-3xl animate-blob-1" />
+          <div className="absolute top-1/4 -right-32 w-[400px] h-[400px] rounded-full bg-violet-600/20 blur-3xl animate-blob-2" />
+          <div className="absolute -bottom-32 left-1/3 w-[350px] h-[350px] rounded-full bg-cyan-600/15 blur-3xl animate-blob-3" />
         </div>
+        {/* Subtle grid overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(99,102,241,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.06) 1px, transparent 1px)',
+            backgroundSize: '48px 48px',
+          }}
+        />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 w-full py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -192,14 +201,25 @@ export default function LandingPage() {
                 {/* Glow behind image */}
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/30 to-violet-500/30 blur-3xl rounded-3xl transform scale-95" />
 
-                {/* Main image */}
-                <div className="relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-indigo-900/40 transform rotate-1 hover:rotate-0 transition-transform duration-500">
-                  <img
-                    src={HERO_IMG}
-                    alt="Shop the latest trends"
-                    className="w-full h-[420px] object-cover"
+                {/* Main image with spinning gradient ring */}
+                <div className="relative p-[2px] rounded-[28px]">
+                  {/* Spinning conic gradient border */}
+                  <div
+                    className="absolute inset-0 rounded-[28px] animate-spin-slow opacity-80"
+                    style={{
+                      background:
+                        'conic-gradient(from 0deg at 50% 50%, #6366f1 0%, #8b5cf6 30%, #06b6d4 55%, #8b5cf6 80%, #6366f1 100%)',
+                    }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent" />
+                  {/* Image card */}
+                  <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-indigo-900/40 transform rotate-1 hover:rotate-0 transition-transform duration-500 bg-gray-950">
+                    <img
+                      src={HERO_IMG}
+                      alt="Shop the latest trends"
+                      className="w-full h-[420px] object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent" />
+                  </div>
                 </div>
 
                 {/* Floating card — top left */}
@@ -233,14 +253,14 @@ export default function LandingPage() {
       <section className="bg-white dark:bg-gray-900 border-y border-gray-200 dark:border-white/10 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-            {STATS.map(({ icon: Icon, value, label }, i) => (
-              <div key={label} className={`flex flex-col sm:flex-row items-center justify-center gap-3 px-4 ${i > 0 ? 'sm:border-l border-gray-200 dark:border-white/10' : ''}`}>
-                <div className="w-11 h-11 rounded-xl bg-indigo-50 dark:bg-indigo-500/15 border border-indigo-100 dark:border-indigo-500/20 flex items-center justify-center shrink-0">
-                  <Icon className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            {STATS.map(({ icon: Icon, value, label, color, glow }, i) => (
+              <div key={label} className={`flex flex-col sm:flex-row items-center justify-center gap-4 px-4 group cursor-default ${i > 0 ? 'sm:border-l border-gray-200 dark:border-white/10' : ''}`}>
+                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center shrink-0 shadow-lg ${glow} group-hover:scale-110 group-hover:shadow-xl transition-all duration-300`}>
+                  <Icon className="w-6 h-6 text-white" />
                 </div>
                 <div className="text-center sm:text-left">
-                  <p className="text-xl font-extrabold text-gray-900 dark:text-white">{value}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
+                  <p className="text-2xl font-extrabold text-gray-900 dark:text-white">{value}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wider">{label}</p>
                 </div>
               </div>
             ))}
@@ -394,7 +414,7 @@ function CategoryCard({ category, onClick }: { category: Category; onClick: () =
   return (
     <button
       onClick={onClick}
-      className="group relative w-full h-60 rounded-2xl overflow-hidden border border-gray-700 hover:border-indigo-500/70 hover:shadow-2xl hover:shadow-indigo-900/40 hover:-translate-y-2 transition-all duration-400 text-left"
+      className="group relative w-full h-72 rounded-2xl overflow-hidden border border-gray-700 hover:border-indigo-500/70 hover:shadow-2xl hover:shadow-indigo-900/40 hover:-translate-y-2 transition-all duration-300 text-left"
     >
       {/* Background image */}
       <img
@@ -407,21 +427,21 @@ function CategoryCard({ category, onClick }: { category: Category; onClick: () =
         }}
       />
 
-      {/* Gradient overlay — always strong from bottom */}
-      <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/50 to-gray-950/10 group-hover:via-indigo-950/60 group-hover:to-transparent transition-all duration-400" />
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-900/50 to-transparent group-hover:via-indigo-950/60 group-hover:from-gray-950 transition-all duration-300" />
 
       {/* Top-right glow dot */}
       <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg shadow-indigo-500/50" />
 
       {/* Content */}
       <div className="absolute bottom-0 left-0 right-0 p-5">
-        <h3 className="font-extrabold text-white text-lg mb-1 drop-shadow-lg">{category.name}</h3>
+        <h3 className="font-extrabold text-white text-xl mb-1 drop-shadow-lg tracking-tight">{category.name}</h3>
         {category.description && (
-          <p className="text-xs text-gray-300 line-clamp-1 mb-2">{category.description}</p>
+          <p className="text-xs text-gray-300/80 line-clamp-1 mb-3">{category.description}</p>
         )}
-        <div className="flex items-center gap-1.5 text-indigo-300 group-hover:text-indigo-200 transition-colors text-xs font-semibold">
+        <div className="inline-flex items-center gap-1.5 bg-white/10 group-hover:bg-indigo-500/70 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full transition-all duration-300 border border-white/20 group-hover:border-indigo-400/60">
           <span>Shop now</span>
-          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+          <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
         </div>
       </div>
     </button>

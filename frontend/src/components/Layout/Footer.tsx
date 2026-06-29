@@ -5,6 +5,8 @@ export default function Footer() {
   return (
     <footer className="bg-gray-100 dark:bg-gray-950 text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-14 pb-8">
+
+        {/* ── Main grid ────────────────────────────────────────────── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
           <div className="lg:col-span-1">
@@ -18,15 +20,20 @@ export default function Footer() {
               Your modern marketplace for electronics, fashion, books, and more. Curated quality, delivered fast.
             </p>
             <div className="flex items-center gap-3">
-              <a href="#" aria-label="X / Twitter" className="w-8 h-8 rounded-full bg-gray-200 dark:bg-white/5 text-gray-500 dark:text-gray-400 flex items-center justify-center hover:bg-indigo-100 dark:hover:bg-indigo-500/20 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                <X className="w-3.5 h-3.5" />
-              </a>
-              <a href="#" aria-label="Website" className="w-8 h-8 rounded-full bg-gray-200 dark:bg-white/5 text-gray-500 dark:text-gray-400 flex items-center justify-center hover:bg-indigo-100 dark:hover:bg-indigo-500/20 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                <Globe className="w-3.5 h-3.5" />
-              </a>
-              <a href="#" aria-label="Blog / RSS" className="w-8 h-8 rounded-full bg-gray-200 dark:bg-white/5 text-gray-500 dark:text-gray-400 flex items-center justify-center hover:bg-indigo-100 dark:hover:bg-indigo-500/20 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                <Rss className="w-3.5 h-3.5" />
-              </a>
+              {[
+                { icon: X,    label: 'X / Twitter' },
+                { icon: Globe,label: 'Website' },
+                { icon: Rss,  label: 'Blog / RSS' },
+              ].map(({ icon: Icon, label }) => (
+                <a
+                  key={label}
+                  href="#"
+                  aria-label={label}
+                  className="w-9 h-9 rounded-full bg-gray-200 dark:bg-white/5 text-gray-500 dark:text-gray-400 flex items-center justify-center hover:bg-indigo-100 dark:hover:bg-indigo-500/20 hover:text-indigo-600 dark:hover:text-indigo-400 hover:scale-110 transition-all duration-200"
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                </a>
+              ))}
             </div>
           </div>
 
@@ -58,7 +65,7 @@ export default function Footer() {
                 { n: '4', label: 'Track your delivery' },
               ].map(({ n, label }) => (
                 <li key={n} className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
-                  <span className="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+                  <span className="w-5 h-5 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
                     {n}
                   </span>
                   {label}
@@ -95,7 +102,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Divider */}
+        {/* ── Bottom bar ───────────────────────────────────────────── */}
         <div className="border-t border-gray-200 dark:border-white/5 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-gray-400 dark:text-gray-600">© {new Date().getFullYear()} CartVerse. All rights reserved.</p>
           <div className="flex items-center gap-6 text-xs text-gray-400 dark:text-gray-600">
