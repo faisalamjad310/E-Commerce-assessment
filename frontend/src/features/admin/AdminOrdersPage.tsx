@@ -55,6 +55,69 @@ function StatusSelect({
   );
 }
 
+function pageRange(current: number, total: number): (number | '…')[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+
+  const pages: (number | '…')[] = [1];
+
+  if (current > 3) pages.push('…');
+
+  const start = Math.max(2, current - 1);
+  const end   = Math.min(total - 1, current + 1);
+  for (let p = start; p <= end; p++) pages.push(p);
+
+  if (current < total - 2) pages.push('…');
+  pages.push(total);
+
+  return pages;
+}
+
+function Pagination({
+  current,
+  total,
+  onChange,
+}: {
+  current: number;
+  total: number;
+  onChange: (page: number) => void;
+}) {
+  const btnBase =
+    'min-w-[32px] h-8 flex items-center justify-center rounded-lg text-xs font-medium transition-colors';
+  const active  = 'bg-indigo-600 text-white shadow-sm';
+  const inactive =
+    'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200';
+  const arrow =
+    'p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed';
+
+  return (
+    <div className="flex items-center gap-1">
+      <button onClick={() => onChange(current - 1)} disabled={current === 1} className={arrow}>
+        <ChevronLeft className="w-4 h-4" />
+      </button>
+
+      {pageRange(current, total).map((p, i) =>
+        p === '…' ? (
+          <span key={`ellipsis-${i}`} className="min-w-[32px] h-8 flex items-center justify-center text-xs text-gray-400 dark:text-gray-600">
+            …
+          </span>
+        ) : (
+          <button
+            key={p}
+            onClick={() => onChange(p)}
+            className={`${btnBase} ${p === current ? active : inactive}`}
+          >
+            {p}
+          </button>
+        )
+      )}
+
+      <button onClick={() => onChange(current + 1)} disabled={current === total} className={arrow}>
+        <ChevronRight className="w-4 h-4" />
+      </button>
+    </div>
+  );
+}
+
 export default function AdminOrdersPage() {
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState<OrderStatus | undefined>(undefined);
@@ -189,26 +252,11 @@ export default function AdminOrdersPage() {
 
         {/* Pagination */}
         {data && data.totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 flex-wrap gap-2">
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              Page {data.page} of {data.totalPages} · {data.total} orders
+              Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, data.total)} of {data.total} orders
             </p>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setPage((p) => p - 1)}
-                disabled={page === 1}
-                className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setPage((p) => p + 1)}
-                disabled={page === data.totalPages}
-                className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+            <Pagination current={page} total={data.totalPages} onChange={setPage} />
           </div>
         )}
       </div>

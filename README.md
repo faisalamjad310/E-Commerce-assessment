@@ -52,11 +52,14 @@ cd frontend
 cp .env.example .env
 ```
 
-`frontend/.env` only needs:
+`frontend/.env` needs:
 
 ```env
 VITE_API_URL=http://localhost:3000
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_...
 ```
+
+`VITE_STRIPE_PUBLISHABLE_KEY` is required for Stripe Elements to render on the checkout page. Get it from the [Stripe Dashboard](https://dashboard.stripe.com/test/apikeys) (publishable key, test mode).
 
 ---
 
@@ -98,16 +101,30 @@ npm run seed
 
 ## Running tests
 
+**Backend (30 tests):**
+
 ```bash
 cd backend
 npm test
 ```
 
-Four unit test suites covering business-critical logic (29 tests total):
+Five unit test suites covering business-critical logic:
 - `auth.service.spec.ts` — signup, login, password hashing, ConflictException
 - `products.service.spec.ts` — catalog filtering, pagination, atomic stock decrement
 - `orders.service.spec.ts` — empty cart rejection, stock guard, server-side totals, cart clear
 - `cart.service.spec.ts` — add item (push/increment), stock guard, remove, clear
+- `app.controller.spec.ts` — health check
+
+**Frontend (12 tests):**
+
+```bash
+cd frontend
+npm test
+```
+
+Two test suites covering client-side business logic:
+- `auth.test.tsx` — AuthContext: login/logout state, localStorage persistence, `isAdmin` flag, session restore on mount
+- `cart.guest.test.tsx` — guest cart: add new item, increment existing, orderTotal, itemCount, remove, updateItem, quantity-0 removal
 
 ---
 
@@ -143,8 +160,7 @@ Checkout uses **Stripe** in test mode. Add your `STRIPE_SECRET_KEY` and `STRIPE_
 ### Admin panel
 - **Dashboard** — revenue, order counts, top-5 products (Recharts)
 - **Products** — full CRUD with drag-and-drop image upload
-- **Orders** — status filter, inline status update
-
+- **Orders** — status filter, inline status update, paginated list
 ---
 
 ## Key business rules

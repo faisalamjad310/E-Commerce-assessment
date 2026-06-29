@@ -20,7 +20,7 @@ export default function OrderConfirmationPage() {
   const isGuest = !user || orderId === 'guest';
   const guestState = location.state as GuestConfirmState | null;
 
-  const { data: order, isLoading } = useQuery({
+  const { data: order, isLoading, isError } = useQuery({
     queryKey: ['order', orderId],
     queryFn: () => ordersApi.getOrder(orderId!),
     enabled: !isGuest && !!orderId,
@@ -49,8 +49,20 @@ export default function OrderConfirmationPage() {
         )}
       </div>
 
-      {/* Guest confirmation card */}
-      {isGuest && guestState ? (
+      {/* Guest with no state — direct navigation or page refresh */}
+      {isGuest && !guestState ? (
+        <div className="theme-card rounded-2xl p-6 text-center space-y-3">
+          <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">
+            Your order has been placed successfully.
+          </p>
+          <p className="text-xs text-gray-400 dark:text-gray-500">
+            A confirmation will be sent to your email. To track your order,{' '}
+            <Link to="/signup" className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">
+              create an account
+            </Link>.
+          </p>
+        </div>
+      ) : isGuest && guestState ? (
         <div className="theme-card rounded-2xl overflow-hidden">
           <div className="p-5 border-b border-gray-100 dark:border-white/10">
             <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
@@ -102,6 +114,16 @@ export default function OrderConfirmationPage() {
           {[1, 2, 3].map(i => (
             <div key={i} className="h-4 bg-gray-100 dark:bg-white/10 rounded-full" />
           ))}
+        </div>
+      ) : isError ? (
+        <div className="theme-card rounded-2xl p-6 text-center">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Could not load order details.{' '}
+            <Link to="/orders" className="text-indigo-600 dark:text-indigo-400 hover:underline">
+              View your orders
+            </Link>
+            .
+          </p>
         </div>
       ) : order ? (
         <div className="theme-card rounded-2xl overflow-hidden">

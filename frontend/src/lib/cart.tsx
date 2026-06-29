@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from 'react';
 import api from './api';
 import { useAuth } from './auth';
 
@@ -61,13 +61,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [orderTotal, setOrderTotal] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const refreshCart = useCallback(async () => {
-    if (!token) {
-      const guestItems = loadGuestCart();
-      setItems(guestItems);
-      setOrderTotal(sumTotal(guestItems));
-      return;
-    }
+  const prevToken = useRef<string | null>(token);
+
+  const loadServerCart = useCallback(async () => {
     try {
       setLoading(true);
       const { data } = await api.get<CartData>('/api/cart');
@@ -79,11 +75,52 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, []);
+
+  const refreshCart = useCallback(async () => {
+    if (!token) {
+      const guestItems = loadGuestCart();
+      setItems(guestItems);
+      setOrderTotal(sumTotal(guestItems));
+      return;
+    }
+    await loadServerCart();
+  }, [token, loadServerCart]);
 
   useEffect(() => {
-    refreshCart();
-  }, [token, refreshCart]);
+    const justLoggedIn = prevToken.current === null && token !== null;
+    prevToken.current = token;
+
+    if (!token) {
+      const guestItems = loadGuestCart();
+      setItems(guestItems);
+      setOrderTotal(sumTotal(guestItems));
+      return;
+    }
+
+    if (!justLoggedIn) {
+      loadServerCart();
+      return;
+    }
+
+    // User just logged in — merge any guest cart items into the server cart
+    const guestItems = loadGuestCart();
+    if (guestItems.length === 0) {
+      loadServerCart();
+      return;
+    }
+
+    setLoading(true);
+    Promise.allSettled(
+      guestItems.map(item =>
+        api.post('/api/cart/items', { productId: item.productId, quantity: item.quantity })
+      )
+    ).then(() => {
+      localStorage.removeItem(GUEST_CART_KEY);
+    }).finally(() => {
+      loadServerCart();
+    });
+  }, [token, loadServerCart]);
 
   const addItem = useCallback(async (
     productId: string,

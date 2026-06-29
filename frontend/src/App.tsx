@@ -17,6 +17,7 @@ import OrderDetailPage from './features/storefront/OrderDetailPage';
 import LoginPage from './features/auth/LoginPage';
 import SignupPage from './features/auth/SignupPage';
 
+import NotFoundPage from './features/storefront/NotFoundPage';
 import AdminDashboardPage from './features/admin/AdminDashboardPage';
 import AdminProductsPage from './features/admin/AdminProductsPage';
 import ProductFormPage from './features/admin/ProductFormPage';
@@ -72,6 +73,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
   );

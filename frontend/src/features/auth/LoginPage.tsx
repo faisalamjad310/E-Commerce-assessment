@@ -96,8 +96,9 @@ export default function LoginPage() {
                   type="email"
                   autoComplete="email"
                   placeholder="you@example.com"
+                  disabled={isSubmitting}
                   {...register('email')}
-                  className={`input-field w-full pl-10 pr-4 py-3 rounded-xl text-sm bg-gray-50 dark:bg-gray-800/60 border text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 ${
+                  className={`input-field w-full pl-10 pr-4 py-3 rounded-xl text-sm bg-gray-50 dark:bg-gray-800/60 border text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 disabled:opacity-50 disabled:cursor-not-allowed ${
                     errors.email
                       ? 'border-red-400 dark:border-red-500'
                       : 'border-gray-200 dark:border-gray-700'
@@ -128,8 +129,9 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
                   placeholder="••••••••"
+                  disabled={isSubmitting}
                   {...register('password')}
-                  className={`input-field w-full pl-10 pr-11 py-3 rounded-xl text-sm bg-gray-50 dark:bg-gray-800/60 border text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 ${
+                  className={`input-field w-full pl-10 pr-11 py-3 rounded-xl text-sm bg-gray-50 dark:bg-gray-800/60 border text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 disabled:opacity-50 disabled:cursor-not-allowed ${
                     errors.password
                       ? 'border-red-400 dark:border-red-500'
                       : 'border-gray-200 dark:border-gray-700'
