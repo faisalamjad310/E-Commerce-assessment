@@ -5,6 +5,7 @@ import { ArrowLeft, ShoppingCart, Package, Plus, Minus, CheckCircle } from 'luci
 import { productsApi, formatPrice } from '../../api/products';
 import { useCart } from '../../lib/cart';
 import { useAuth } from '../../lib/auth';
+import RecommendedProducts from '../../components/RecommendedProducts';
 
 function DetailSkeleton() {
   return (
@@ -211,6 +212,8 @@ export default function ProductDetailPage() {
           )}
         </div>
       </div>
+
+      <RecommendedProducts excludeProductId={id!} />
     </div>
   );
 }

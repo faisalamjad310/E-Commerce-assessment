@@ -37,6 +37,13 @@ export const productsApi = {
 
   categories: () =>
     api.get<string[]>('/api/products/categories').then(r => r.data),
+
+  recommendations: (excludeProductId?: string) =>
+    api
+      .get<Product[]>('/api/recommendations', {
+        params: excludeProductId ? { excludeProductId } : undefined,
+      })
+      .then((r) => r.data),
 };
 
 export function formatPrice(cents: number): string {
