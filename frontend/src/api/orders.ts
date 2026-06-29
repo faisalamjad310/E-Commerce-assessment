@@ -84,11 +84,22 @@ export const adminOrdersApi = {
     api.get<DashboardStats>('/api/admin/dashboard').then((r) => r.data),
 };
 
+export interface CreateIntentResult {
+  clientSecret: string;
+  paymentIntentId: string;
+}
+
 export const ordersApi = {
-  checkout: (payload: CheckoutPayload) =>
+  createPaymentIntent: (amount: number) =>
+    api.post<CreateIntentResult>('/api/payments/create-intent', { amount }).then(r => r.data),
+
+  createPaymentIntentGuest: (amount: number) =>
+    api.post<CreateIntentResult>('/api/payments/create-intent/guest', { amount }).then(r => r.data),
+
+  checkout: (payload: CheckoutPayload & { paymentIntentId: string }) =>
     api.post<CheckoutResult>('/api/payments/checkout', payload).then(r => r.data),
 
-  guestCheckout: (payload: GuestCheckoutPayload) =>
+  guestCheckout: (payload: GuestCheckoutPayload & { paymentIntentId: string }) =>
     api.post<CheckoutResult>('/api/payments/guest-checkout', payload).then(r => r.data),
 
   getMyOrders: () =>

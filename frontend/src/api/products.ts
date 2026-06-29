@@ -32,6 +32,11 @@ export const productsApi = {
   catalog: (params: CatalogParams) =>
     api.get<CatalogResponse>('/api/products', { params }).then(r => r.data),
 
+  suggestions: (q: string) =>
+    api
+      .get<CatalogResponse>('/api/products', { params: { search: q, limit: 6 } })
+      .then(r => r.data.items),
+
   getOne: (id: string) =>
     api.get<Product>(`/api/products/${id}`).then(r => r.data),
 

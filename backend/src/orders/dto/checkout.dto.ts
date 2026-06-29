@@ -37,6 +37,11 @@ export class CheckoutDto {
   @ValidateNested()
   @Type(() => ShippingAddressDto)
   shippingAddress: ShippingAddressDto;
+
+  @ApiProperty({ example: 'pi_3Qx...' })
+  @IsString()
+  @IsNotEmpty()
+  paymentIntentId: string;
 }
 
 export class GuestContactDto {
@@ -80,4 +85,16 @@ export class GuestCheckoutDto {
   @ValidateNested()
   @Type(() => GuestContactDto)
   guestContact: GuestContactDto;
+
+  @ApiProperty({ example: 'pi_3Qx...' })
+  @IsString()
+  @IsNotEmpty()
+  paymentIntentId: string;
+}
+
+export class CreateIntentDto {
+  @ApiProperty({ example: 9999, description: 'Amount in cents' })
+  @IsInt()
+  @Min(50)
+  amount: number;
 }
