@@ -1,16 +1,29 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { CheckCircle, Package, ArrowRight, Home } from 'lucide-react';
+import { CheckCircle, Package, ArrowRight, Home, Mail, Phone } from 'lucide-react';
 import { ordersApi, STATUS_COLOR, STATUS_LABEL } from '../../api/orders';
 import { formatPrice } from '../../api/products';
+import { useAuth } from '../../lib/auth';
+
+interface GuestConfirmState {
+  orderId: string;
+  paymentRef: string;
+  shippingAddress: { name: string; address: string; city: string };
+  guestContact: { email: string; phone: string };
+}
 
 export default function OrderConfirmationPage() {
   const { orderId } = useParams<{ orderId: string }>();
+  const { user } = useAuth();
+  const location = useLocation();
+
+  const isGuest = !user || orderId === 'guest';
+  const guestState = location.state as GuestConfirmState | null;
 
   const { data: order, isLoading } = useQuery({
     queryKey: ['order', orderId],
     queryFn: () => ordersApi.getOrder(orderId!),
-    enabled: !!orderId,
+    enabled: !isGuest && !!orderId,
   });
 
   return (
@@ -24,6 +37,11 @@ export default function OrderConfirmationPage() {
         <p className="text-gray-500 dark:text-gray-400">
           Thank you for your order. We'll notify you when it ships.
         </p>
+        {guestState?.orderId && (
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 font-mono">
+            Order #{guestState.orderId.slice(-8).toUpperCase()}
+          </p>
+        )}
         {order && (
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 font-mono">
             Order #{order._id.slice(-8).toUpperCase()}
@@ -31,7 +49,55 @@ export default function OrderConfirmationPage() {
         )}
       </div>
 
-      {isLoading ? (
+      {/* Guest confirmation card */}
+      {isGuest && guestState ? (
+        <div className="theme-card rounded-2xl overflow-hidden">
+          <div className="p-5 border-b border-gray-100 dark:border-white/10">
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+              <Package className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
+              Order Details
+            </h2>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-xs text-gray-400 mb-1">Ship to</p>
+                <p className="font-medium text-gray-800 dark:text-gray-200">{guestState.shippingAddress.name}</p>
+                <p className="text-xs text-gray-400">
+                  {guestState.shippingAddress.address}, {guestState.shippingAddress.city}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 mb-1">Payment ref</p>
+                <p className="text-xs font-mono text-gray-500 dark:text-gray-400 break-all">
+                  {guestState.paymentRef}
+                </p>
+              </div>
+              <div className="flex items-start gap-2">
+                <Mail className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-xs text-gray-400 mb-0.5">Confirmation to</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{guestState.guestContact.email}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <Phone className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-xs text-gray-400 mb-0.5">Contact</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{guestState.guestContact.phone}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="p-5 bg-indigo-50 dark:bg-indigo-500/10">
+            <p className="text-xs text-indigo-700 dark:text-indigo-300">
+              Want to track your order?{' '}
+              <Link to="/signup" className="font-semibold hover:underline">
+                Create an account
+              </Link>{' '}
+              to save your order history.
+            </p>
+          </div>
+        </div>
+      ) : isLoading ? (
         <div className="theme-card rounded-2xl p-6 animate-pulse space-y-3">
           {[1, 2, 3].map(i => (
             <div key={i} className="h-4 bg-gray-100 dark:bg-white/10 rounded-full" />
@@ -89,13 +155,15 @@ export default function OrderConfirmationPage() {
 
       {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-3 mt-8">
-        <Link
-          to="/orders"
-          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-200 dark:border-white/10 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/8 transition-colors"
-        >
-          <Package className="w-4 h-4" />
-          View All Orders
-        </Link>
+        {!isGuest && (
+          <Link
+            to="/orders"
+            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-200 dark:border-white/10 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/8 transition-colors"
+          >
+            <Package className="w-4 h-4" />
+            View All Orders
+          </Link>
+        )}
         <Link
           to="/"
           className="flex-1 btn-gradient flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-white"

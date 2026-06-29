@@ -31,6 +31,17 @@ export interface CheckoutPayload {
   shippingAddress: ShippingAddress;
 }
 
+export interface GuestContact {
+  email: string;
+  phone: string;
+}
+
+export interface GuestCheckoutPayload {
+  items: { productId: string; quantity: number }[];
+  shippingAddress: ShippingAddress;
+  guestContact: GuestContact;
+}
+
 export interface CheckoutResult {
   orderId: string;
   paymentRef: string;
@@ -76,6 +87,9 @@ export const adminOrdersApi = {
 export const ordersApi = {
   checkout: (payload: CheckoutPayload) =>
     api.post<CheckoutResult>('/api/payments/checkout', payload).then(r => r.data),
+
+  guestCheckout: (payload: GuestCheckoutPayload) =>
+    api.post<CheckoutResult>('/api/payments/guest-checkout', payload).then(r => r.data),
 
   getMyOrders: () =>
     api.get<Order[]>('/api/orders').then(r => r.data),

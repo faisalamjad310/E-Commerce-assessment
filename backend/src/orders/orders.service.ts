@@ -7,7 +7,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { isValidObjectId, Model } from 'mongoose';
 import { Order, OrderDocument } from './schemas/order.schema';
-import { ShippingAddressDto } from './dto/checkout.dto';
+import { ShippingAddressDto, GuestContactDto, GuestCheckoutItemDto } from './dto/checkout.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { AdminOrdersQueryDto } from './dto/admin-orders-query.dto';
 import { CartService } from '../cart/cart.service';
@@ -90,8 +90,56 @@ export class OrdersService {
     if (!isValidObjectId(id)) throw new NotFoundException('Order not found');
     const order = await this.orderModel.findById(id);
     if (!order) throw new NotFoundException('Order not found');
-    if (order.userId.toString() !== userId) throw new ForbiddenException('Access denied');
+    if (!order.userId || order.userId.toString() !== userId) throw new ForbiddenException('Access denied');
     return order;
+  }
+
+  async createGuestOrder(
+    items: GuestCheckoutItemDto[],
+    shippingAddress: ShippingAddressDto,
+    guestContact: GuestContactDto,
+    paymentRef: string,
+  ): Promise<OrderDocument> {
+    if (!items.length) throw new BadRequestException('Cart is empty');
+
+    const snapshotItems: {
+      productId: string;
+      name: string;
+      priceAtOrder: number;
+      quantity: number;
+    }[] = [];
+
+    for (const item of items) {
+      const product = await this.productsService.findOne(item.productId);
+      const ok = await this.productsService.decrementStock(item.productId, item.quantity);
+      if (!ok) {
+        throw new BadRequestException(
+          `Insufficient stock for "${product.name}". Please update your cart.`,
+        );
+      }
+      snapshotItems.push({
+        productId: item.productId,
+        name: product.name,
+        priceAtOrder: product.price,
+        quantity: item.quantity,
+      });
+    }
+
+    const subtotal = snapshotItems.reduce(
+      (sum, i) => sum + i.priceAtOrder * i.quantity,
+      0,
+    );
+
+    return this.orderModel.create({
+      userId: null,
+      items: snapshotItems,
+      subtotal,
+      total: subtotal,
+      status: 'pending',
+      paymentRef,
+      shippingAddress,
+      guestContact,
+    });
   }
 
   async findAllOrders(query: AdminOrdersQueryDto) {

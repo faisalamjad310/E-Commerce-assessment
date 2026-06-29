@@ -1,19 +1,26 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ArrowLeft, ArrowRight, CreditCard, Lock, MapPin, CheckCircle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CreditCard, Lock, MapPin, CheckCircle, User } from 'lucide-react';
 import { useCart } from '../../lib/cart';
-import { ordersApi, type ShippingAddress } from '../../api/orders';
+import { useAuth } from '../../lib/auth';
+import { ordersApi, type ShippingAddress, type GuestContact } from '../../api/orders';
 import { formatPrice } from '../../api/products';
+import { queryClient } from '../../lib/queryClient';
 
-const shippingSchema = z.object({
-  name:    z.string().min(2, 'Full name is required'),
-  address: z.string().min(5, 'Street address is required'),
-  city:    z.string().min(2, 'City is required'),
-});
-type ShippingForm = z.infer<typeof shippingSchema>;
+// ── Form type ────────────────────────────────────────────────────────────────
+
+type CheckoutForm = {
+  name: string;
+  address: string;
+  city: string;
+  email: string;
+  phone: string;
+};
+
+// ── Step indicator ───────────────────────────────────────────────────────────
 
 function StepIndicator({ step }: { step: 1 | 2 }) {
   return (
@@ -33,7 +40,7 @@ function StepIndicator({ step }: { step: 1 | 2 }) {
               {done ? <CheckCircle className="w-4 h-4" /> : num}
             </div>
             <span className={`text-sm hidden sm:block ${active ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-400'}`}>
-              {num === 1 ? 'Shipping' : 'Payment'}
+              {num === 1 ? 'Details' : 'Payment'}
             </span>
           </div>
         );
@@ -42,16 +49,63 @@ function StepIndicator({ step }: { step: 1 | 2 }) {
   );
 }
 
+// ── Field component ───────────────────────────────────────────────────────────
+
+function Field({
+  label,
+  error,
+  children,
+}: {
+  label: string;
+  error?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+        {label}
+      </label>
+      {children}
+      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+    </div>
+  );
+}
+
+const inputCls =
+  'w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-white/10 rounded-xl bg-white dark:bg-white/8 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 transition-all';
+
+// ── Main component ────────────────────────────────────────────────────────────
+
 export default function CheckoutPage() {
   const { items, orderTotal, clearLocalCart } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const isGuest = !user;
+
+  const schema = useMemo(
+    () =>
+      z.object({
+        name:    z.string().min(2, 'Full name is required'),
+        address: z.string().min(5, 'Street address is required'),
+        city:    z.string().min(2, 'City is required'),
+        email:   isGuest
+          ? z.string().email('Valid email address is required')
+          : z.string(),
+        phone:   isGuest
+          ? z.string().min(7, 'Valid phone number is required')
+          : z.string(),
+      }),
+    [isGuest],
+  );
+
   const [step, setStep] = useState<1 | 2>(1);
   const [shipping, setShipping] = useState<ShippingAddress | null>(null);
+  const [guestContact, setGuestContact] = useState<GuestContact | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<ShippingForm>({
-    resolver: zodResolver(shippingSchema),
+  const { register, handleSubmit, formState: { errors } } = useForm<CheckoutForm>({
+    resolver: zodResolver(schema),
   });
 
   if (!items.length) {
@@ -65,8 +119,11 @@ export default function CheckoutPage() {
     );
   }
 
-  function onShippingNext(data: ShippingForm) {
-    setShipping(data);
+  function onShippingNext(data: CheckoutForm) {
+    setShipping({ name: data.name, address: data.address, city: data.city });
+    if (isGuest) {
+      setGuestContact({ email: data.email, phone: data.phone });
+    }
     setStep(2);
   }
 
@@ -75,9 +132,28 @@ export default function CheckoutPage() {
     try {
       setSubmitting(true);
       setError(null);
-      const result = await ordersApi.checkout({ shippingAddress: shipping });
-      clearLocalCart();
-      navigate(`/order-confirmation/${result.orderId}`);
+
+      if (isGuest) {
+        const result = await ordersApi.guestCheckout({
+          items: items.map(i => ({ productId: i.productId, quantity: i.quantity })),
+          shippingAddress: shipping,
+          guestContact: guestContact!,
+        });
+        clearLocalCart();
+        navigate('/order-confirmation/guest', {
+          state: {
+            orderId: result.orderId,
+            paymentRef: result.paymentRef,
+            shippingAddress: shipping,
+            guestContact: guestContact,
+          },
+        });
+      } else {
+        const result = await ordersApi.checkout({ shippingAddress: shipping });
+        clearLocalCart();
+        await queryClient.invalidateQueries({ queryKey: ['my-orders'] });
+        navigate(`/order-confirmation/${result.orderId}`);
+      }
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
@@ -136,6 +212,17 @@ export default function CheckoutPage() {
       </Link>
 
       <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Checkout</h1>
+
+      {isGuest && (
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          Checking out as guest.{' '}
+          <Link to="/login" state={{ from: '/checkout' }} className="text-indigo-600 dark:text-indigo-400 hover:underline">
+            Sign in
+          </Link>{' '}
+          to save your order history.
+        </p>
+      )}
+
       <StepIndicator step={step} />
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
@@ -143,30 +230,83 @@ export default function CheckoutPage() {
         <div className="lg:col-span-3">
           {step === 1 ? (
             <form onSubmit={handleSubmit(onShippingNext)} className="space-y-4">
-              <div className="flex items-center gap-2 mb-5">
-                <MapPin className="w-4 h-4 text-indigo-500" />
-                <h2 className="font-semibold text-gray-900 dark:text-white">Shipping Address</h2>
-              </div>
 
-              {[
-                { id: 'name' as const,    label: 'Full Name',      placeholder: 'Jane Doe' },
-                { id: 'address' as const, label: 'Street Address', placeholder: '123 Main Street, Apt 4B' },
-                { id: 'city' as const,    label: 'City',           placeholder: 'London' },
-              ].map(f => (
-                <div key={f.id}>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                    {f.label}
-                  </label>
-                  <input
-                    {...register(f.id)}
-                    placeholder={f.placeholder}
-                    className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-white/10 rounded-xl bg-white dark:bg-white/8 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 transition-all"
-                  />
-                  {errors[f.id] && (
-                    <p className="text-xs text-red-500 mt-1">{errors[f.id]!.message}</p>
-                  )}
+              {/* Contact info — guests only */}
+              {isGuest && (
+                <>
+                  <div className="flex items-center gap-2 mb-2">
+                    <User className="w-4 h-4 text-indigo-500" />
+                    <h2 className="font-semibold text-gray-900 dark:text-white">Contact Information</h2>
+                  </div>
+
+                  <Field label="Full Name" error={errors.name?.message}>
+                    <input
+                      {...register('name')}
+                      placeholder="Jane Doe"
+                      className={inputCls}
+                    />
+                  </Field>
+
+                  <Field label="Email Address" error={errors.email?.message}>
+                    <input
+                      {...register('email')}
+                      type="email"
+                      placeholder="jane@example.com"
+                      className={inputCls}
+                    />
+                  </Field>
+
+                  <Field label="Phone Number" error={errors.phone?.message}>
+                    <input
+                      {...register('phone')}
+                      type="tel"
+                      placeholder="+44 7911 123456"
+                      className={inputCls}
+                    />
+                  </Field>
+
+                  <div className="border-t border-gray-100 dark:border-white/10 pt-4">
+                    <div className="flex items-center gap-2 mb-4">
+                      <MapPin className="w-4 h-4 text-indigo-500" />
+                      <h2 className="font-semibold text-gray-900 dark:text-white">Shipping Address</h2>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Shipping address — all users */}
+              {!isGuest && (
+                <div className="flex items-center gap-2 mb-5">
+                  <MapPin className="w-4 h-4 text-indigo-500" />
+                  <h2 className="font-semibold text-gray-900 dark:text-white">Shipping Address</h2>
                 </div>
-              ))}
+              )}
+
+              {!isGuest && (
+                <Field label="Full Name" error={errors.name?.message}>
+                  <input
+                    {...register('name')}
+                    placeholder="Jane Doe"
+                    className={inputCls}
+                  />
+                </Field>
+              )}
+
+              <Field label="Street Address" error={errors.address?.message}>
+                <input
+                  {...register('address')}
+                  placeholder="123 Main Street, Apt 4B"
+                  className={inputCls}
+                />
+              </Field>
+
+              <Field label="City" error={errors.city?.message}>
+                <input
+                  {...register('city')}
+                  placeholder="London"
+                  className={inputCls}
+                />
+              </Field>
 
               <button
                 type="submit"

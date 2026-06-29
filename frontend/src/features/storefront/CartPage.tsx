@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, ShoppingCart, Tag } from 'lucide-react';
+import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Tag } from 'lucide-react';
 import { useCart } from '../../lib/cart';
-import { useAuth } from '../../lib/auth';
 import { formatPrice } from '../../api/products';
 
 function CartSkeleton() {
@@ -30,7 +29,6 @@ function CartSkeleton() {
 
 export default function CartPage() {
   const { items, orderTotal, loading, updateItem, removeItem } = useCart();
-  const { user } = useAuth();
   const navigate = useNavigate();
   const [busyId, setBusyId] = useState<string | null>(null);
 
@@ -50,27 +48,6 @@ export default function CartPage() {
     } finally {
       setBusyId(null);
     }
-  }
-
-  if (!user) {
-    return (
-      <div className="max-w-5xl mx-auto px-4 py-20 text-center">
-        <ShoppingCart className="w-16 h-16 text-gray-200 dark:text-white/20 mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-          Sign in to view your cart
-        </h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-          Your cart is saved across sessions once you're signed in.
-        </p>
-        <Link
-          to="/login"
-          state={{ from: '/cart' }}
-          className="btn-gradient inline-block px-6 py-2.5 text-sm font-semibold text-white rounded-xl"
-        >
-          Sign In
-        </Link>
-      </div>
-    );
   }
 
   if (loading && items.length === 0) return <CartSkeleton />;

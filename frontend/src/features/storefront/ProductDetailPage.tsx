@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, ShoppingCart, Package, Plus, Minus, CheckCircle } from 'lucide-react';
 import { productsApi, formatPrice } from '../../api/products';
 import { useCart } from '../../lib/cart';
-import { useAuth } from '../../lib/auth';
 import RecommendedProducts from '../../components/RecommendedProducts';
 
 function DetailSkeleton() {
@@ -30,8 +29,6 @@ function DetailSkeleton() {
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const { user } = useAuth();
   const { addItem } = useCart();
 
   const [qty, setQty] = useState(1);
@@ -46,14 +43,14 @@ export default function ProductDetailPage() {
   });
 
   async function handleAddToCart() {
-    if (!user) {
-      navigate('/login', { state: { from: `/product/${id}` } });
-      return;
-    }
     try {
       setAdding(true);
       setCartError(null);
-      await addItem(product!._id, qty);
+      await addItem(product!._id, qty, {
+        name: product!.name,
+        price: product!.price,
+        imageUrl: product!.imageUrl,
+      });
       setAdded(true);
       setTimeout(() => setAdded(false), 2500);
     } catch (err: unknown) {

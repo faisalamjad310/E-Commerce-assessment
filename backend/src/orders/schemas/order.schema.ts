@@ -30,10 +30,20 @@ class ShippingAddress {
 }
 const ShippingAddressSchema = SchemaFactory.createForClass(ShippingAddress);
 
+@Schema({ _id: false })
+class GuestContact {
+  @Prop({ required: true })
+  email: string;
+
+  @Prop({ required: true })
+  phone: string;
+}
+const GuestContactSchema = SchemaFactory.createForClass(GuestContact);
+
 @Schema({ timestamps: { createdAt: 'createdAt', updatedAt: false } })
 export class Order {
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
-  userId: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'User', required: false, default: null, index: true })
+  userId: Types.ObjectId | null;
 
   @Prop({ type: [OrderItemSchema], required: true })
   items: OrderItem[];
@@ -57,6 +67,9 @@ export class Order {
 
   @Prop({ type: ShippingAddressSchema, required: true })
   shippingAddress: ShippingAddress;
+
+  @Prop({ type: GuestContactSchema, required: false, default: null })
+  guestContact: GuestContact | null;
 
   createdAt: Date;
 }
