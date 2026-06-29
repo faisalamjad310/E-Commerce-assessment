@@ -11,6 +11,7 @@ import { OrdersModule } from './orders/orders.module';
 import { PaymentsModule } from './payments/payments.module';
 import { UploadModule } from './upload/upload.module';
 import { RecommendationsModule } from './recommendations/recommendations.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { RecommendationsModule } from './recommendations/recommendations.module'
     PaymentsModule,
     UploadModule,
     RecommendationsModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

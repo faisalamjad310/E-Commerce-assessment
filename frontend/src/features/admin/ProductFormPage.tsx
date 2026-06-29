@@ -14,7 +14,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { adminProductsApi } from '../../api/admin';
-import { productsApi } from '../../api/products';
+import { categoriesApi } from '../../api/categories';
 
 const schema = z.object({
   name: z.string().min(1, 'Required').max(200, 'Max 200 characters'),
@@ -78,9 +78,9 @@ export default function ProductFormPage() {
     enabled: isEdit,
   });
 
-  const { data: categoriesData } = useQuery({
+  const { data: categoriesData = [] } = useQuery({
     queryKey: ['categories'],
-    queryFn: productsApi.categories,
+    queryFn: categoriesApi.list,
   });
 
   useEffect(() => {
@@ -320,17 +320,17 @@ export default function ProductFormPage() {
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
               Category <span className="text-red-500">*</span>
             </label>
-            <input
+            <select
               {...register('category')}
-              list="categories-list"
-              placeholder="Electronics"
-              className="w-full px-3.5 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900/30 transition-all"
-            />
-            <datalist id="categories-list">
-              {categoriesData?.map((c) => (
-                <option key={c} value={c} />
+              className="w-full px-3.5 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900/30 transition-all"
+            >
+              <option value="">Select a category…</option>
+              {categoriesData.map((cat) => (
+                <option key={cat._id} value={cat.name}>
+                  {cat.name}
+                </option>
               ))}
-            </datalist>
+            </select>
             <FieldError msg={errors.category?.message} />
           </div>
 

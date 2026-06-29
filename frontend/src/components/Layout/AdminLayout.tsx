@@ -1,11 +1,12 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Package, ShoppingBag, LogOut, ChevronRight, Sun, Moon } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingBag, LogOut, ChevronRight, Sun, Moon, Tag } from 'lucide-react';
 import { useAuth } from '../../lib/auth';
 import { useTheme } from '../../lib/theme';
 
 const navItems = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/products', label: 'Products', icon: Package, end: false },
+  { to: '/admin/categories', label: 'Categories', icon: Tag, end: false },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingBag, end: false },
 ];
 

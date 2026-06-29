@@ -11,6 +11,13 @@ dotenv.config({ path: join(__dirname, '../.env') });
 
 // ── Inline schemas (avoids NestJS bootstrap overhead) ─────────────────────────
 
+const CategorySchema = new Schema({
+  name:        { type: String, required: true, unique: true, trim: true },
+  description: { type: String, default: '' },
+  imageUrl:    { type: String, required: true },
+  slug:        { type: String, trim: true },
+}, { timestamps: { createdAt: 'createdAt', updatedAt: false } });
+
 const UserSchema = new Schema({
   name:         { type: String, required: true },
   email:        { type: String, required: true, unique: true, lowercase: true },
@@ -51,6 +58,8 @@ const OrderSchema = new Schema({
 }, { timestamps: { createdAt: 'createdAt', updatedAt: false } });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+const CategoryModel = model<any>('Category', CategorySchema);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const UserModel    = model<any>('User',    UserSchema);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ProductModel = model<any>('Product', ProductSchema);
@@ -89,6 +98,33 @@ const PRODUCTS = [
   { name: 'Smart Air Purifier', description: 'True HEPA H13 air purifier with auto mode, real-time air quality display, and companion app. 50m² coverage.', price: 14999, imageUrl: 'https://placehold.co/600x600/fff7ed/c2410c?text=Purifier', category: 'Home & Kitchen', stock: 8 },
 ];
 
+const CATEGORIES = [
+  {
+    name: 'Electronics',
+    description: 'Latest gadgets, devices, and tech accessories',
+    imageUrl: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=600&q=80',
+    slug: 'electronics',
+  },
+  {
+    name: 'Clothing',
+    description: 'Fashion, footwear, and accessories for every style',
+    imageUrl: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&q=80',
+    slug: 'clothing',
+  },
+  {
+    name: 'Books',
+    description: 'Bestsellers, textbooks, and timeless classics',
+    imageUrl: 'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=600&q=80',
+    slug: 'books',
+  },
+  {
+    name: 'Home & Kitchen',
+    description: 'Everything for your home, from decor to cookware',
+    imageUrl: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600&q=80',
+    slug: 'home-kitchen',
+  },
+];
+
 const ADMIN    = { name: 'Admin',            email: 'admin@cartverse.com',    password: 'Admin@1234',    role: 'admin'    as const };
 const CUSTOMER = { name: 'Demo Customer',    email: 'customer@cartverse.com', password: 'Customer@1234', role: 'customer' as const };
 
@@ -100,19 +136,24 @@ async function seed() {
   await connect(uri);
   console.log('Connected.');
 
-  // 1. Products — wipe and re-create
+  // 1. Categories — wipe and re-create
+  await CategoryModel.deleteMany({});
+  await CategoryModel.insertMany(CATEGORIES);
+  console.log(`✓ Seeded ${CATEGORIES.length} categories`);
+
+  // 2. Products — wipe and re-create
   await ProductModel.deleteMany({});
   const products = await ProductModel.insertMany(PRODUCTS);
   console.log(`✓ Seeded ${products.length} products`);
 
-  // 2. Users — upsert by email so existing tokens stay valid
+  // 3. Users — upsert by email so existing tokens stay valid
   const [adminUser, customerUser] = await Promise.all([
     upsertUser(ADMIN),
     upsertUser(CUSTOMER),
   ]);
   console.log(`✓ Upserted users: ${ADMIN.email}, ${CUSTOMER.email}`);
 
-  // 3. Orders for customer — wipe and re-create
+  // 4. Orders for customer — wipe and re-create
   await OrderModel.deleteMany({ userId: customerUser._id });
 
   const [p0, p1, p2] = products;

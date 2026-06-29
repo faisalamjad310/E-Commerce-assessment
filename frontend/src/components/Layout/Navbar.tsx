@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { ShoppingCart, User, LogOut, LogIn, Search, Sun, Moon, ChevronDown, LayoutDashboard } from 'lucide-react';
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { ShoppingCart, User, LogOut, LogIn, Search, Sun, Moon, ChevronDown, LayoutDashboard, Store } from 'lucide-react';
 import { useAuth } from '../../lib/auth';
 import { useCart } from '../../lib/cart';
 import { useTheme } from '../../lib/theme';
@@ -11,14 +11,17 @@ export default function Navbar() {
   const { itemCount } = useCart();
   const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const [menuOpen, setMenuOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
 
+  const isShopPage = location.pathname === '/shop';
+
   function handleSearch(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const q = searchRef.current?.value.trim() ?? '';
-    navigate(q ? `/?search=${encodeURIComponent(q)}` : '/');
+    navigate(q ? `/shop?search=${encodeURIComponent(q)}` : '/shop');
   }
 
   return (
@@ -30,6 +33,19 @@ export default function Navbar() {
           <CartVerseLogo size={34} textSize="text-lg" />
         </Link>
 
+        {/* Shop link */}
+        <Link
+          to="/shop"
+          className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+            isShopPage
+              ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10'
+              : 'text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-white/8'
+          }`}
+        >
+          <Store className="w-4 h-4" />
+          Shop
+        </Link>
+
         {/* Search */}
         <form onSubmit={handleSearch} className="flex-1 max-w-lg mx-2 sm:mx-4">
           <div className="relative">
@@ -37,7 +53,7 @@ export default function Navbar() {
             <input
               ref={searchRef}
               name="search"
-              defaultValue={searchParams.get('search') ?? ''}
+              defaultValue={isShopPage ? (searchParams.get('search') ?? '') : ''}
               placeholder="Search products…"
               className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-white/8 text-gray-800 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 transition-all"
             />

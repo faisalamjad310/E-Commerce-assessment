@@ -4,6 +4,7 @@ import AdminLayout from './components/Layout/AdminLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 
+import LandingPage from './features/storefront/LandingPage';
 import CatalogPage from './features/storefront/CatalogPage';
 import ProductDetailPage from './features/storefront/ProductDetailPage';
 import CartPage from './features/storefront/CartPage';
@@ -19,6 +20,7 @@ import AdminDashboardPage from './features/admin/AdminDashboardPage';
 import AdminProductsPage from './features/admin/AdminProductsPage';
 import ProductFormPage from './features/admin/ProductFormPage';
 import AdminOrdersPage from './features/admin/AdminOrdersPage';
+import AdminCategoriesPage from './features/admin/AdminCategoriesPage';
 
 export default function App() {
   return (
@@ -40,12 +42,14 @@ export default function App() {
         <Route path="products" element={<AdminProductsPage />} />
         <Route path="products/new" element={<ProductFormPage />} />
         <Route path="products/:id/edit" element={<ProductFormPage />} />
+        <Route path="categories" element={<AdminCategoriesPage />} />
         <Route path="orders" element={<AdminOrdersPage />} />
       </Route>
 
       {/* Storefront */}
       <Route element={<StorefrontLayout />}>
-        <Route index element={<CatalogPage />} />
+        <Route index element={<LandingPage />} />
+        <Route path="/shop" element={<CatalogPage />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route
