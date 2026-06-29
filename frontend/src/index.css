@@ -1,10 +1,155 @@
 @import "tailwindcss";
 
-*, *::before, *::after {
-  box-sizing: border-box;
+/* Class-based dark mode */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ────────── Design tokens ────────── */
+:root {
+  --brand-from: #6366f1;
+  --brand-mid:  #8b5cf6;
+  --brand-to:   #06b6d4;
+  --surface:    255 255 255;
+  --bg:         248 250 252;
 }
 
+.dark {
+  --surface: 15 23 42;
+  --bg:      8 10 26;
+}
+
+/* ────────── Gradient text ────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--brand-from) 0%, var(--brand-mid) 55%, var(--brand-to) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ────────── Auth page background ────────── */
+.auth-bg {
+  background:
+    radial-gradient(at 20% 25%, hsla(240, 100%, 78%, 0.18) 0px, transparent 55%),
+    radial-gradient(at 80% 10%, hsla(270, 100%, 72%, 0.18) 0px, transparent 55%),
+    radial-gradient(at 10% 80%, hsla(190, 100%, 68%, 0.18) 0px, transparent 55%),
+    radial-gradient(at 90% 85%, hsla(310, 100%, 78%, 0.15) 0px, transparent 55%);
+  background-color: #f8fafc;
+}
+
+.dark .auth-bg {
+  background:
+    radial-gradient(at 20% 25%, hsla(240, 100%, 30%, 0.25) 0px, transparent 55%),
+    radial-gradient(at 80% 10%, hsla(270, 100%, 28%, 0.25) 0px, transparent 55%),
+    radial-gradient(at 10% 80%, hsla(190, 100%, 25%, 0.20) 0px, transparent 55%),
+    radial-gradient(at 90% 85%, hsla(310, 100%, 28%, 0.18) 0px, transparent 55%);
+  background-color: #08081a;
+}
+
+/* ────────── Keyframes ────────── */
+@keyframes blob-1 {
+  0%,100% { transform: translate(0,   0)   scale(1);    }
+  33%     { transform: translate(35px,-55px) scale(1.07); }
+  66%     { transform: translate(-25px,25px) scale(0.93); }
+}
+@keyframes blob-2 {
+  0%,100% { transform: translate(0,   0)   scale(1);    }
+  33%     { transform: translate(-45px,30px) scale(1.10); }
+  66%     { transform: translate(30px,-45px) scale(0.90); }
+}
+@keyframes blob-3 {
+  0%,100% { transform: translate(0,   0)   scale(1);    }
+  33%     { transform: translate(20px, 50px) scale(0.95); }
+  66%     { transform: translate(-35px,-25px) scale(1.05); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0   rgba(99,102,241,0.4); }
+  70%  { box-shadow: 0 0 0 10px rgba(99,102,241,0);   }
+  100% { box-shadow: 0 0 0 0   rgba(99,102,241,0);   }
+}
+
+/* ────────── Animation classes ────────── */
+.animate-blob-1 { animation: blob-1 9s  ease-in-out infinite; }
+.animate-blob-2 { animation: blob-2 11s ease-in-out infinite; }
+.animate-blob-3 { animation: blob-3 13s ease-in-out infinite; }
+
+.animate-fade-in-up { animation: fadeInUp 0.55s cubic-bezier(0.22,1,0.36,1) forwards; }
+.animate-fade-in    { animation: fadeIn   0.35s ease-out forwards; }
+.animate-slide-down { animation: slideDown 0.2s ease-out forwards; }
+
+.delay-100 { animation-delay: 0.10s; }
+.delay-150 { animation-delay: 0.15s; }
+.delay-200 { animation-delay: 0.20s; }
+.delay-250 { animation-delay: 0.25s; }
+.delay-300 { animation-delay: 0.30s; }
+.delay-350 { animation-delay: 0.35s; }
+
+/* ────────── Gradient button ────────── */
+.btn-gradient {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6 60%, #7c3aed);
+  background-size: 200% 200%;
+  transition: background-position 0.4s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+.btn-gradient:hover {
+  background-position: right center;
+  box-shadow: 0 8px 25px -4px rgba(99,102,241,0.5);
+  transform: translateY(-1px);
+}
+.btn-gradient:active { transform: scale(0.98); }
+
+/* ────────── Glass card ────────── */
+.glass-card {
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.6);
+}
+.dark .glass-card {
+  background: rgba(15,23,42,0.80);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+
+/* ────────── Input focus ring ────────── */
+.input-field {
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-field:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+.dark .input-field:focus {
+  border-color: #818cf8;
+  box-shadow: 0 0 0 3px rgba(129,140,248,0.15);
+}
+
+/* ────────── Scrollbar ────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c7d2fe; border-radius: 99px; }
+.dark ::-webkit-scrollbar-thumb { background: #312e81; }
+
+/* ────────── Base ────────── */
+*, *::before, *::after { box-sizing: border-box; }
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: rgb(var(--bg));
+  transition: background-color 0.3s ease;
 }
