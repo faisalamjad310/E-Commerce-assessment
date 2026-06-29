@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { isValidObjectId, Model } from 'mongoose';
+import { isValidObjectId, Model, Types } from 'mongoose';
 import { Product, ProductDocument } from './schemas/product.schema';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -92,6 +92,15 @@ export class ProductsService {
       throw new NotFoundException(`Product not found`);
     }
     return updated;
+  }
+
+  /** Atomically decrements stock. Returns false if stock < quantity (no negative stock). */
+  async decrementStock(productId: string, quantity: number): Promise<boolean> {
+    const result = await this.productModel.findOneAndUpdate(
+      { _id: new Types.ObjectId(productId), stock: { $gte: quantity } },
+      { $inc: { stock: -quantity } },
+    );
+    return result !== null;
   }
 
   async remove(id: string): Promise<void> {
