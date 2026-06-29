@@ -5,7 +5,22 @@
       "Bash(npx --version)",
       "Bash(npx @nestjs/cli new backend --package-manager npm --skip-git --strict)",
       "Bash(npm create *)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(mkdir -p \"f:/CartVerse/backend/src/categories/schemas\" \"f:/CartVerse/backend/src/categories/dto\")",
+      "Bash(mkdir -p \"f:/CartVerse/frontend/src/hooks\")",
+      "Bash(node -e \"const r = require\\('./node_modules/lucide-react/dist/cjs/lucide-react.js'\\); console.log\\('Store' in r, 'ShoppingBag' in r\\)\")",
+      "Bash(npx vite *)",
+      "Bash(node -e \"const r = require\\('./node_modules/lucide-react/dist/cjs/lucide-react.js'\\); ['Github','Twitter','Instagram','X','Github','GithubIcon','Linkedin','Facebook'].forEach\\(n => console.log\\(n, n in r\\)\\)\")",
+      "Bash(node -e \"const r = require\\('./node_modules/lucide-react/dist/cjs/lucide-react.js'\\); ['Globe','ExternalLink','Link2','Share2','Rss','AtSign'].forEach\\(n => console.log\\(n, n in r\\)\\)\")",
+      "Bash(grep -v \"//\")",
+      "Bash(node -e ' *)",
+      "Bash(curl -s -X POST http://localhost:3000/api/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"customer@cartverse.com\",\"password\":\"Customer@1234\"}')",
+      "Bash(curl -s http://localhost:3000/api/orders -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YTQyOTZkYjkyOTFlZWI3Mzk0YTk2MmMiLCJlbWFpbCI6ImN1c3RvbWVyQGNhcnR2ZXJzZS5jb20iLCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3ODI3NDkyNTMsImV4cCI6MTc4MzM1NDA1M30.hBPg63-JfG7MyrCMVIxPgoCX2rJGV8Af8AQHpelVXu4')",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'Order count: {len\\(d\\)}'\\); [print\\(f'  - #{o[\\\\\"_id\\\\\"][-8:]} | {o[\\\\\"status\\\\\"]} | {o[\\\\\"paymentRef\\\\\"]} | {o[\\\\\"createdAt\\\\\"]}'\\) for o in d]\")",
+      "Bash(xargs cat)",
+      "Bash(xargs ls -la)",
+      "Bash(npx vitest *)",
+      "Bash(npm test *)"
     ]
   }
 }

@@ -1,0 +1,92 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git log *)",
+      "Bash(git diff *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git checkout *)",
+      "Bash(git branch *)",
+      "Bash(git pull)",
+      "Bash(git push)",
+      "Bash(git stash *)",
+      "Bash(npm install)",
+      "Bash(npm install *)",
+      "Bash(npm run build)",
+      "Bash(npm run lint)",
+      "Bash(npm run format)",
+      "Bash(npm run start:dev)",
+      "Bash(npm run dev)",
+      "Bash(npm test)",
+      "Bash(npm test *)",
+      "Bash(npx tsc *)",
+      "Bash(npx vitest *)",
+      "Bash(npx prettier *)",
+      "Bash(node *)",
+      "Bash(ls *)",
+      "Bash(mkdir -p *)",
+      "Bash(cat *)",
+      "Bash(grep *)",
+      "Bash(find . *)"
+    ],
+    "deny": [
+      "Bash(git push --force*)",
+      "Bash(git push -f *)",
+      "Bash(git reset --hard*)",
+      "Bash(git checkout -- .)",
+      "Bash(git clean -f*)",
+      "Bash(git branch -D *)",
+      "Bash(rm -rf /)",
+      "Bash(rm -rf /*)",
+      "Bash(npm run seed)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash f:/CartVerse/.claude/hooks/scan-secrets.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash f:/CartVerse/.claude/hooks/warn-large-files.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash f:/CartVerse/.claude/hooks/protect-files.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash f:/CartVerse/.claude/hooks/block-dangerous-commands.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash f:/CartVerse/.claude/hooks/format-on-save.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "bash f:/CartVerse/.claude/hooks/session-start.sh"
+      }
+    ]
+  }
+}
