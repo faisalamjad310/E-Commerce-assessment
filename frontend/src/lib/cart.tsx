@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import api from './api';
+import { useAuth } from './auth';
 
 export interface CartItem {
   productId: string;
@@ -30,6 +31,7 @@ interface CartContextValue {
 const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const { token } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
   const [orderTotal, setOrderTotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -41,13 +43,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setItems(data.items ?? []);
       setOrderTotal(data.orderTotal ?? 0);
     } catch {
-      // not logged in — clear silently
       setItems([]);
       setOrderTotal(0);
     } finally {
       setLoading(false);
     }
   }, []);
+
+  // Reload cart whenever the auth token changes (login / logout)
+  useEffect(() => {
+    if (token) {
+      refreshCart();
+    } else {
+      setItems([]);
+      setOrderTotal(0);
+    }
+  }, [token, refreshCart]);
 
   const addItem = useCallback(async (productId: string, quantity: number) => {
     await api.post('/api/cart/items', { productId, quantity });
