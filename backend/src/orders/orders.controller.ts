@@ -44,6 +44,14 @@ export class OrdersController {
 
   // ── Admin routes ───────────────────────────────────────────────────────────
 
+  @Get('admin/dashboard')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @ApiOperation({ summary: '[Admin] Get dashboard statistics' })
+  getDashboardStats() {
+    return this.ordersService.getDashboardStats();
+  }
+
   @Get('admin/orders')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')

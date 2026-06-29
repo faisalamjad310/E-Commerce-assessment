@@ -36,6 +36,43 @@ export interface CheckoutResult {
   paymentRef: string;
 }
 
+export interface AdminOrder {
+  _id: string;
+  userId: { _id: string; name: string; email: string } | null;
+  items: OrderItem[];
+  subtotal: number;
+  total: number;
+  status: OrderStatus;
+  paymentRef: string;
+  shippingAddress: ShippingAddress;
+  createdAt: string;
+}
+
+export interface AdminOrdersResponse {
+  items: AdminOrder[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export interface DashboardStats {
+  totalRevenue: number;
+  totalOrders: number;
+  orderCountByStatus: Partial<Record<OrderStatus, number>>;
+  topProducts: { _id: string; totalSold: number }[];
+}
+
+export const adminOrdersApi = {
+  getAll: (params?: { status?: OrderStatus; page?: number; limit?: number }) =>
+    api.get<AdminOrdersResponse>('/api/admin/orders', { params }).then((r) => r.data),
+
+  updateStatus: (id: string, status: OrderStatus) =>
+    api.patch<AdminOrder>(`/api/admin/orders/${id}/status`, { status }).then((r) => r.data),
+
+  getDashboard: () =>
+    api.get<DashboardStats>('/api/admin/dashboard').then((r) => r.data),
+};
+
 export const ordersApi = {
   checkout: (payload: CheckoutPayload) =>
     api.post<CheckoutResult>('/api/payments/checkout', payload).then(r => r.data),

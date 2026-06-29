@@ -123,4 +123,35 @@ export class OrdersService {
     if (!order) throw new NotFoundException('Order not found');
     return order;
   }
+
+  async getDashboardStats() {
+    const [revenueAgg, statusAgg, topProductsAgg] = await Promise.all([
+      this.orderModel.aggregate<{ totalRevenue: number }>([
+        { $match: { status: { $ne: 'cancelled' } } },
+        { $group: { _id: null, totalRevenue: { $sum: '$total' } } },
+      ]),
+      this.orderModel.aggregate<{ _id: string; count: number }>([
+        { $group: { _id: '$status', count: { $sum: 1 } } },
+      ]),
+      this.orderModel.aggregate<{ _id: string; totalSold: number }>([
+        { $match: { status: { $ne: 'cancelled' } } },
+        { $unwind: '$items' },
+        { $group: { _id: '$items.name', totalSold: { $sum: '$items.quantity' } } },
+        { $sort: { totalSold: -1 } },
+        { $limit: 5 },
+      ]),
+    ]);
+
+    const orderCountByStatus: Record<string, number> = {};
+    for (const s of statusAgg) {
+      orderCountByStatus[s._id] = s.count;
+    }
+
+    return {
+      totalRevenue: revenueAgg[0]?.totalRevenue ?? 0,
+      totalOrders: Object.values(orderCountByStatus).reduce((a, b) => a + b, 0),
+      orderCountByStatus,
+      topProducts: topProductsAgg,
+    };
+  }
 }
